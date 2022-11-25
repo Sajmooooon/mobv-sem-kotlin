@@ -5,7 +5,7 @@
 
         <variable
             name="model"
-            type="com.example.zadanie.ui.viewmodels.BarsViewModel" />
+            type="com.example.zadanie.ui.viewmodels.FriendsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,7 +19,7 @@
             style="@style/TextAppearance.Material3.HeadlineLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/bars"
+            android:text="Friends"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -46,15 +46,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-        <com.example.zadanie.ui.widget.barlist.BarsRecyclerView
+        <com.example.zadanie.ui.widget.friendlist.FriendRecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:barItems="@{model.bars}"
+            app:friendItems="@{model.friends}"
             />
+<!--                        app:friendItems="@{model.friends}"
+-->
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <ImageView
@@ -67,18 +69,6 @@
             android:src="@drawable/ic_baseline_location_on_24"
             android:background="@drawable/circle_filled"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-        <ImageView
-            android:id="@+id/addFriendBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginStart="12dp"
-            android:src="@drawable/ic_baseline_add_24"
-            android:background="@drawable/circle_filled"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <View

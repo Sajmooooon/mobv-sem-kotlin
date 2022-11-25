@@ -13,4 +13,6 @@
     <string name="repeat_password">repeat password</string>
     <string name="back">back</string>
     <string name="zobrazit_na_mape">Zobrazit na mape</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

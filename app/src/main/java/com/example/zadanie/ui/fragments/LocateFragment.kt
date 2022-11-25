@@ -15,12 +15,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.zadanie.GeofenceBroadcastReceiver
 import com.example.zadanie.R
+import com.example.zadanie.databinding.FragmentBarsBinding
 import com.example.zadanie.databinding.FragmentLocateBinding
 import com.example.zadanie.helpers.Injection
 import com.example.zadanie.helpers.PreferenceData
@@ -31,7 +33,11 @@ import com.example.zadanie.ui.widget.nearbyBars.NearbyBarsEvents
 import com.google.android.gms.location.*
 
 class LocateFragment : Fragment() {
-    private lateinit var binding: FragmentLocateBinding
+//    private lateinit var binding: FragmentLocateBinding
+
+    private var _binding: FragmentLocateBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var viewmodel: LocateViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
@@ -68,7 +74,7 @@ class LocateFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentLocateBinding.inflate(inflater, container, false)
+        _binding = FragmentLocateBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -90,11 +96,13 @@ class LocateFragment : Fragment() {
                 it.findNavController().popBackStack()
             }
             bnd.swiperefresh.setOnRefreshListener {
+                binding.lottieAnim.isVisible = true
                 loadData()
             }
 
             bnd.checkme.setOnClickListener {
                 if (checkBackgroundPermissions()) {
+//                    binding.lottieAnim.isVisible = true
                     viewmodel.checkMe()
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -230,5 +238,10 @@ class LocateFragment : Fragment() {
             requireContext(),
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

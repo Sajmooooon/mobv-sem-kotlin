@@ -3,6 +3,7 @@ package com.example.zadanie.data.api
 import android.content.Context
 import com.example.zadanie.data.api.helper.AuthInterceptor
 import com.example.zadanie.data.api.helper.TokenAuthenticator
+import com.example.zadanie.data.db.model.Contact
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Response
@@ -38,6 +39,20 @@ interface RestApi {
     @Headers("mobv-auth: accept")
     suspend fun barMessage(@Body bar: BarMessageRequest) : Response<Any>
 
+    @POST("contact/message.php")
+    @Headers("mobv-auth: accept")
+    suspend fun addFriend(@Body contact: AddContactRequest) : Response<Void>
+
+    @GET("contact/list.php")
+    @Headers("mobv-auth: accept")
+    suspend fun friendList() : Response<List<Contact>>
+
+//    @GET("contact/list.php")
+//    @Headers("mobv-auth: accept")
+//    suspend fun showFriends() : Response<List<Contact>>
+
+
+
     companion object{
         const val BASE_URL = "https://zadanie.mpage.sk/"
 
@@ -52,7 +67,9 @@ interface RestApi {
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-            return retrofit.create(RestApi::class.java)
+            val retrofitBuilder: RestApi by lazy { retrofit.create(RestApi::class.java) }
+//          return retrofit.create(RestApi::class.java)
+            return retrofitBuilder
         }
     }
 }

@@ -18,7 +18,10 @@ import com.example.zadanie.helpers.PreferenceData
 import com.example.zadanie.ui.viewmodels.DetailViewModel
 
 class BarDetailFragment : Fragment() {
-    private lateinit var binding: FragmentDetailBarBinding
+//    private lateinit var binding: FragmentDetailBarBinding
+    private var _binding: FragmentDetailBarBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var viewModel: DetailViewModel
     private val navigationArgs: BarDetailFragmentArgs by navArgs()
 
@@ -29,6 +32,8 @@ class BarDetailFragment : Fragment() {
             this,
             Injection.provideViewModelFactory(requireContext())
         ).get(DetailViewModel::class.java)
+
+//        viewModel.id.observe()
     }
 
     override fun onCreateView(
@@ -36,7 +41,7 @@ class BarDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDetailBarBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailBarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -71,6 +76,14 @@ class BarDetailFragment : Fragment() {
         }
 
         viewModel.loadBar(navigationArgs.id)
+//        viewModel.id.observe(viewLifecycleOwner) {
+//            viewModel.loadUser(navigationArgs.id)
+//        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

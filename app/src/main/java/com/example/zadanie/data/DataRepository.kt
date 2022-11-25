@@ -1,10 +1,12 @@
 package com.example.zadanie.data
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.zadanie.data.api.*
 import com.example.zadanie.data.db.LocalCache
 import com.example.zadanie.data.db.model.BarItem
+import com.example.zadanie.data.db.model.Contact
 import com.example.zadanie.ui.viewmodels.data.MyLocation
 import com.example.zadanie.ui.viewmodels.data.NearbyBar
 import java.io.IOException
@@ -15,6 +17,72 @@ class DataRepository private constructor(
     private val service: RestApi,
     private val cache: LocalCache
 ){
+
+    suspend fun apiAddFriend(
+        name: String,
+        onError: (error: String) -> Unit,
+        onSuccess: (success: Boolean) -> Unit){
+        try {
+
+            val resp = service.addFriend(AddContactRequest(contact = name))
+            when(resp.code()){
+                500 -> onError("User doesnt exist.")
+                400 -> onError("wrong request.")
+                401 -> onError("non authorized.")
+                404 -> onError("wrong endpoint.")
+                200 -> resp.body()?.let { user ->
+                    onSuccess(true)
+                }
+                else -> onError("Failed to add Friend, try again later.")
+
+            }
+
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            onError("Friend add failed, check internet connection")
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            onError("Login in failed, error.")
+        }
+    }
+
+
+    suspend fun apiFriendsList(
+        onError: (error: String) -> Unit
+    ) {
+        Log.d("friend-in","Startin")
+        try {
+            Log.d("friend-more","in2")
+            val resp = service.friendList()
+            if (resp.isSuccessful) {
+                resp.body()?.let { bars ->
+                    Log.d("body",""+bars)
+                    val b = bars.map {
+                        Contact(
+                            it.user_id,
+                            it.user_name,
+                            it.bar_id,
+                            it.bar_name,
+//                            it.time,
+                            it.bar_lat,
+                            it.bar_lon
+                        )
+                    }
+                    Log.d("friend", b.toString())
+                    cache.deleteFriends()
+                    cache.insertFriends(b)
+                } ?: onError("Failed to load friends")
+            } else {
+                onError("Failed to read friends")
+            }
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            onError("Failed to load friends, check internet connection")
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            onError("Failed to load friends, error.")
+        }
+    }
 
     suspend fun apiUserCreate(
         name: String,
@@ -88,7 +156,7 @@ class DataRepository private constructor(
         try {
             val resp = service.barMessage(BarMessageRequest(bar.id.toString(),bar.name,bar.type,bar.lat,bar.lon))
             if (resp.isSuccessful) {
-                resp.body()?.let { user ->
+                resp.body()?.let {
                     onSuccess(true)
                 }
             } else {
@@ -184,7 +252,7 @@ class DataRepository private constructor(
                             b.tags.getOrDefault("amenity", ""),
                             b.lat,
                             b.lon,
-                            b.tags
+                            b.tags,
                         )
                     }
                 } ?: onError("Failed to load bars")
@@ -203,6 +271,14 @@ class DataRepository private constructor(
 
     fun dbBars() : LiveData<List<BarItem>?> {
         return cache.getBars()
+    }
+
+    fun dbFriends(): LiveData<List<Contact>?>{
+        return cache.getFriends()
+    }
+
+    fun getDbUsers(id: String?): Int?{
+        return cache.getUsers(id)
     }
 
     companion object{

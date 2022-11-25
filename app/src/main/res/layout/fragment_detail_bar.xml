@@ -32,7 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="@string/back"
             app:layout_constraintBottom_toBottomOf="@id/header_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/header_title" />
@@ -44,6 +43,18 @@
             android:text="@{model.type}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header_title" />
+
+
+<!--        <TextView-->
+<!--            android:id="@+id/value"-->
+<!--            style="@style/TextAppearance.Material3.BodyMedium"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="10dp"-->
+<!--            android:text="@{model.users.toString()}"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/type"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@id/type" />-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/mapButton"

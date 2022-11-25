@@ -13,44 +13,25 @@ import androidx.navigation.findNavController
 import com.example.zadanie.R
 import com.example.zadanie.databinding.FragmentAddFriendBinding
 import com.example.zadanie.databinding.FragmentBarsBinding
+import com.example.zadanie.databinding.FragmentFriendsBinding
 import com.example.zadanie.helpers.Injection
 import com.example.zadanie.helpers.PreferenceData
 import com.example.zadanie.ui.viewmodels.BarsViewModel
+import com.example.zadanie.ui.viewmodels.FriendsViewModel
 
-class BarsFragment : Fragment() {
+class FriendsFragment : Fragment() {
 //    private lateinit var binding: FragmentBarsBinding
-    private var _binding: FragmentBarsBinding? = null
+    private var _binding: FragmentFriendsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewmodel: BarsViewModel
-
-    private val locationPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
-                // Precise location access granted.
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                viewmodel.show("Only approximate location access granted.")
-                // Only approximate location access granted.
-            }
-            else -> {
-                viewmodel.show("Location access denied.")
-                // No location access granted.
-            }
-        }
-    }
-
+    private lateinit var viewmodel: FriendsViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         viewmodel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext())
-        ).get(BarsViewModel::class.java)
+        ).get(FriendsViewModel::class.java)
     }
 
 
@@ -59,7 +40,7 @@ class BarsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentBarsBinding.inflate(inflater, container, false)
+        _binding = FragmentFriendsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -86,19 +67,6 @@ class BarsFragment : Fragment() {
             }
 
             bnd.findBar.setOnClickListener {
-                if (checkPermissions()) {
-                    it.findNavController().navigate(R.id.action_to_locate)
-                } else {
-                    locationPermissionRequest.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
-                }
-
-            }
-            bnd.addFriendBtn.setOnClickListener{
                 it.findNavController().navigate(R.id.action_to_add)
             }
         }
@@ -112,16 +80,6 @@ class BarsFragment : Fragment() {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
         }
-    }
-
-    private fun checkPermissions(): Boolean {
-        return ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
 

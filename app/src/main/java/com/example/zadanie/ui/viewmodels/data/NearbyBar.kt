@@ -10,6 +10,7 @@ class NearbyBar(
     val lon: Double,
     val tags: Map<String, String>,
     var distance: Double = 0.0
+
 ){
 
     fun distanceTo(location: MyLocation): Double{

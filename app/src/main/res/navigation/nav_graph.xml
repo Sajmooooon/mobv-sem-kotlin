@@ -31,6 +31,14 @@
             app:argType="string" />
     </fragment>
 
+    <fragment
+        android:id="@+id/add_friend_fragment"
+        android:name="com.example.zadanie.ui.fragments.AddFriendFragment"
+        android:label="AddFriendFragment" />
+    <fragment
+        android:id="@+id/friends_fragment"
+        android:name="com.example.zadanie.ui.fragments.FriendsFragment"
+        android:label="FriendsFragment" />
     <action
         android:id="@+id/action_to_login"
         app:destination="@id/login_fragment" />
@@ -47,4 +55,13 @@
     <action
         android:id="@+id/action_to_detail"
         app:destination="@id/detail_fragment" />
+    <action
+        android:id="@+id/action_to_add"
+        app:destination="@id/add_friend_fragment" />
+
+    <action
+        android:id="@+id/action_to_friends"
+        app:destination="@id/friends_fragment" />
+
+
 </navigation>
