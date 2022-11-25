@@ -1,11 +1,15 @@
 package com.example.zadanie.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.zadanie.data.DataRepository
 import com.example.zadanie.data.db.model.BarItem
 import com.example.zadanie.helpers.Evento
 import com.example.zadanie.ui.viewmodels.data.NearbyBar
 import com.example.zadanie.ui.widget.detailList.BarDetailItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val repository: DataRepository) : ViewModel() {
@@ -64,30 +68,37 @@ class DetailViewModel(private val repository: DataRepository) : ViewModel() {
 //        }
 //    }
 
-   suspend fun loadUser(id: String) {
-        if (id.isBlank())
-            return
-        viewModelScope.launch {
-            loading.postValue(true)
-            users.postValue(repository.getDbUsers(id))
-//            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
-            loading.postValue(false)
-        }
-
-
-    }
+//   suspend fun loadUser(id: String) {
+//        if (id.isBlank())
+//            return
+//        viewModelScope.launch {
+//            loading.postValue(true)
+//            users.postValue(repository.getDbUsers(id))
+////            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
+//            loading.postValue(false)
+//        }
+//
+//
+//    }
 
     fun loadBar(id: String) {
         if (id.isBlank())
             return
         viewModelScope.launch {
             loading.postValue(true)
+//            coroutineScope {
             bar.postValue(repository.apiBarDetail(id) { _message.postValue(Evento(it)) })
+//            }
+//            coroutineScope {
+//                loadUsers(id)
+//            }
 //            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
             loading.postValue(false)
         }
 //        text()
-//        loadUsers(id)
+        loadUsers(id)
+
+
 
     }
 
@@ -95,11 +106,10 @@ class DetailViewModel(private val repository: DataRepository) : ViewModel() {
         if (id.isBlank())
             return
 //        users.postValue(5)
-//        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch{
 //            loading.postValue(true)
-//            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
+            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
 //            loading.postValue(false)
-
-//        }
+        }
     }
 }
