@@ -27,38 +27,50 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <EditText
-            android:id="@+id/username"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/username_Field"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_title"
             android:layout_marginStart="24dp"
             android:layout_marginTop="96dp"
             android:layout_marginEnd="24dp"
+            android:hint="@string/prompt_email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:autofillHints="@string/prompt_email"
-            android:hint="@string/prompt_email"
+
             android:inputType="textEmailAddress"
             android:selectAllOnFocus="true"
+             />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_Field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/username_Field"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
-            android:autofillHints="@string/prompt_password"
-            android:hint="@string/prompt_password"
+            android:hint="@string/prompt_password">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:imeActionLabel="@string/action_login"
             android:imeOptions="actionDone"
             android:inputType="textPassword"
             android:selectAllOnFocus="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/username" />
-
+             />
+        </com.google.android.material.textfield.TextInputLayout>
         <Button
             android:id="@+id/login"
             android:layout_width="wrap_content"
@@ -72,7 +84,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password_Field"
             app:layout_constraintVertical_bias="0.2" />
 
         <TextView
