@@ -1,13 +1,16 @@
 package com.example.zadanie.ui.fragments
 
 import android.Manifest
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_MUTABLE
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +25,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.zadanie.GeofenceBroadcastReceiver
 import com.example.zadanie.R
-import com.example.zadanie.databinding.FragmentBarsBinding
 import com.example.zadanie.databinding.FragmentLocateBinding
 import com.example.zadanie.helpers.Injection
 import com.example.zadanie.helpers.PreferenceData
@@ -69,12 +71,36 @@ class LocateFragment : Fragment() {
     }
 
 
+    fun anim(){
+        val anim = binding.lottieAnim
+        anim.addAnimatorListener(object : Animator.AnimatorListener {
+
+            override fun onAnimationStart(animation: Animator) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                Log.e("Animation:", "end")
+                anim.isVisible = false
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+            }
+        } )
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLocateBinding.inflate(inflater, container, false)
+        anim()
+
         return binding.root
     }
 
@@ -96,12 +122,14 @@ class LocateFragment : Fragment() {
                 it.findNavController().popBackStack()
             }
             bnd.swiperefresh.setOnRefreshListener {
-                binding.lottieAnim.isVisible = true
                 loadData()
             }
 
             bnd.checkme.setOnClickListener {
                 if (checkBackgroundPermissions()) {
+//                    binding.lottieAnim.isVisible = true
+
+
 //                    binding.lottieAnim.isVisible = true
                     viewmodel.checkMe()
                 } else {
@@ -168,7 +196,7 @@ class LocateFragment : Fragment() {
         val geofenceIntent = PendingIntent.getBroadcast(
             requireContext(), 0,
             Intent(requireContext(), GeofenceBroadcastReceiver::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_UPDATE_CURRENT or FLAG_MUTABLE
         )
 
         val request = GeofencingRequest.Builder().apply {
@@ -184,7 +212,13 @@ class LocateFragment : Fragment() {
 
         geofencingClient.addGeofences(request, geofenceIntent).run {
             addOnSuccessListener {
-                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
+//                here
+                val anim = binding.lottieAnim
+                anim.isVisible = true
+                anim.resumeAnimation()
+
+
+//                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
             }
             addOnFailureListener {
                 viewmodel.show("Geofence failed to create.") //permission is not granted for All times.
@@ -192,6 +226,7 @@ class LocateFragment : Fragment() {
             }
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun permissionDialog() {
