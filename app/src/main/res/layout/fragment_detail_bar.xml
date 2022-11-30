@@ -51,6 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:visibility="gone"
             android:text="@{model.users.toString()}"
             app:layout_constraintBottom_toBottomOf="@id/type"
             app:layout_constraintEnd_toEndOf="parent"

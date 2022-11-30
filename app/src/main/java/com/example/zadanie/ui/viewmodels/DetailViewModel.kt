@@ -101,15 +101,20 @@ class DetailViewModel(private val repository: DataRepository) : ViewModel() {
 
 
     }
+//    fun loadUsers(){
+//        id.value?.let {
+//            users.postValue(repository.getDbUsers(it){ _message.postValue(Evento(it)) })
+//            Log.d("users",""+users.value)
+//        }
+//
+//    }
 
     fun loadUsers(id:String){
+
         if (id.isBlank())
             return
-//        users.postValue(5)
         CoroutineScope(Dispatchers.IO).launch{
-//            loading.postValue(true)
             users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
-//            loading.postValue(false)
         }
     }
 }

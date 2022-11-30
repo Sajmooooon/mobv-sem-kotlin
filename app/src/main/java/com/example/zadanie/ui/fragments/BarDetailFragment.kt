@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -76,8 +78,18 @@ class BarDetailFragment : Fragment() {
         }
 
         viewModel.loadBar(navigationArgs.id)
-//        viewModel.id.observe(viewLifecycleOwner) {
-//            viewModel.loadUser(navigationArgs.id)
+
+        viewModel.bar.observe(viewLifecycleOwner) {
+            viewModel.bar.value?.let {
+                binding.value.visibility = View.VISIBLE
+            }
+        }
+//        binding.value.isVisible = true
+
+//        viewModel.loading.observe(viewLifecycleOwner) {
+//            if(it){
+//                binding.value.isVisible = true
+//            }
 //        }
     }
 
