@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.zadanie.data.db.model.BarItem
 import com.example.zadanie.data.db.model.Contact
 
-@Database(entities = [BarItem::class,Contact::class], version = 3, exportSchema = false)
+@Database(entities = [BarItem::class,Contact::class], version = 4, exportSchema = false)
 abstract class AppRoomDatabase: RoomDatabase() {
     abstract fun appDao(): DbDao
 

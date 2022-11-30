@@ -24,4 +24,18 @@ class LocalCache(private val dao: DbDao) {
     fun getUsers(id: String?): Int?{
         return dao.getUsers(id)
     }
+
+
+//    sort
+//    fun getBarsNameDesc(): LiveData<List<BarItem>?> = dao.getBarsNameDesc()
+//
+//    fun getBarsNameAsc(): LiveData<List<BarItem>?> = dao.getBarsNameAsc()
+//
+//    fun getUsersDesc(): LiveData<List<BarItem>?> = dao.getBarsUsersDesc()
+//
+//    fun getUsersAsc(): LiveData<List<BarItem>?> = dao.getBarsUsersAsc()
+//
+//    fun getDistanceDesc(): LiveData<List<BarItem>?> = dao.getDistanceDesc()
+//
+//    fun getDistanceAsc(): LiveData<List<BarItem>?> = dao.getDistanceAsc()
 }

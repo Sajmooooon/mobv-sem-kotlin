@@ -3,12 +3,15 @@ package com.example.zadanie.data
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asFlow
 import com.example.zadanie.data.api.*
 import com.example.zadanie.data.db.LocalCache
 import com.example.zadanie.data.db.model.BarItem
 import com.example.zadanie.data.db.model.Contact
 import com.example.zadanie.ui.viewmodels.data.MyLocation
 import com.example.zadanie.ui.viewmodels.data.NearbyBar
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,16 +19,17 @@ import java.util.*
 class DataRepository private constructor(
     private val service: RestApi,
     private val cache: LocalCache
-){
+) {
 
     suspend fun apiAddFriend(
         name: String,
         onError: (error: String) -> Unit,
-        onSuccess: (success: Boolean) -> Unit){
+        onSuccess: (success: Boolean) -> Unit
+    ) {
         try {
 
             val resp = service.addFriend(AddContactRequest(contact = name))
-            when(resp.code()){
+            when (resp.code()) {
                 500 -> onError("User doesnt exist.")
                 400 -> onError("wrong request.")
                 401 -> onError("non authorized.")
@@ -50,13 +54,13 @@ class DataRepository private constructor(
     suspend fun apiFriendsList(
         onError: (error: String) -> Unit
     ) {
-        Log.d("friend-in","Startin")
+        Log.d("friend-in", "Startin")
         try {
-            Log.d("friend-more","in2")
+            Log.d("friend-more", "in2")
             val resp = service.friendList()
             if (resp.isSuccessful) {
                 resp.body()?.let { bars ->
-                    Log.d("body",""+bars)
+                    Log.d("body", "" + bars)
                     val b = bars.map {
                         Contact(
                             it.user_id,
@@ -94,10 +98,10 @@ class DataRepository private constructor(
             val resp = service.userCreate(UserCreateRequest(name = name, password = password))
             if (resp.isSuccessful) {
                 resp.body()?.let { user ->
-                    if (user.uid == "-1"){
+                    if (user.uid == "-1") {
                         onStatus(null)
                         onError("Name already exists. Choose another.")
-                    }else {
+                    } else {
                         onStatus(user)
                     }
                 }
@@ -126,10 +130,10 @@ class DataRepository private constructor(
             val resp = service.userLogin(UserLoginRequest(name = name, password = password))
             if (resp.isSuccessful) {
                 resp.body()?.let { user ->
-                    if (user.uid == "-1"){
+                    if (user.uid == "-1") {
                         onStatus(null)
                         onError("Wrong name or password.")
-                    }else {
+                    } else {
                         onStatus(user)
                     }
                 }
@@ -154,7 +158,15 @@ class DataRepository private constructor(
         onSuccess: (success: Boolean) -> Unit
     ) {
         try {
-            val resp = service.barMessage(BarMessageRequest(bar.id.toString(),bar.name,bar.type,bar.lat,bar.lon))
+            val resp = service.barMessage(
+                BarMessageRequest(
+                    bar.id.toString(),
+                    bar.name,
+                    bar.type,
+                    bar.lat,
+                    bar.lon
+                )
+            )
             if (resp.isSuccessful) {
                 resp.body()?.let {
                     onSuccess(true)
@@ -170,6 +182,7 @@ class DataRepository private constructor(
             onError("Login in failed, error.")
         }
     }
+
 
     suspend fun apiBarList(
         onError: (error: String) -> Unit
@@ -204,19 +217,64 @@ class DataRepository private constructor(
         }
     }
 
+    //pridanie s webservicom
+//    suspend fun apiDistanceBarsServ(
+//        lat: Double, lon: Double,
+//    ) {
+//        try {
+////            var bar = listOf<BarItem>()
+//            val resp = service.barList()
+//            if (resp.isSuccessful) {
+//                resp.body()?.let { bars ->
+//
+//
+//                    val bar = bars.map {
+//                        BarItem(
+//                            it.bar_id,
+//                            it.bar_name,
+//                            it.bar_type,
+//                            it.lat,
+//                            it.lon,
+//                            it.users,
+//
+//                            ).apply {
+//                            distance = distanceTo(MyLocation(lat, lon))
+//                        }
+//                    }
+//                    cache.deleteBars()
+//                    cache.insertBars(bar)
+//                }
+//
+//
+//            }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            print("exception ${e}")
+//        }
+//    }
+
+
     suspend fun apiNearbyBars(
         lat: Double, lon: Double,
         onError: (error: String) -> Unit
-    ) : List<NearbyBar> {
+    ): List<NearbyBar> {
         var nearby = listOf<NearbyBar>()
         try {
-            val q = "[out:json];node(around:250,$lat,$lon);(node(around:250)[\"amenity\"~\"^pub$|^bar$|^restaurant$|^cafe$|^fast_food$|^stripclub$|^nightclub$\"];);out body;>;out skel;"
+            val q =
+                "[out:json];node(around:250,$lat,$lon);(node(around:250)[\"amenity\"~\"^pub$|^bar$|^restaurant$|^cafe$|^fast_food$|^stripclub$|^nightclub$\"];);out body;>;out skel;"
             val resp = service.barNearby(q)
             if (resp.isSuccessful) {
                 resp.body()?.let { bars ->
                     nearby = bars.elements.map {
-                        NearbyBar(it.id,it.tags.getOrDefault("name",""), it.tags.getOrDefault("amenity",""),it.lat,it.lon,it.tags).apply {
-                            distance = distanceTo(MyLocation(lat,lon))
+                        NearbyBar(
+                            it.id,
+                            it.tags.getOrDefault("name", ""),
+                            it.tags.getOrDefault("amenity", ""),
+                            it.lat,
+                            it.lon,
+                            it.tags
+                        ).apply {
+                            distance = distanceTo(MyLocation(lat, lon))
                         }
                     }
                     nearby = nearby.filter { it.name.isNotBlank() }.sortedBy { it.distance }
@@ -237,8 +295,8 @@ class DataRepository private constructor(
     suspend fun apiBarDetail(
         id: String,
         onError: (error: String) -> Unit
-    ) : NearbyBar? {
-        var nearby:NearbyBar? = null
+    ): NearbyBar? {
+        var nearby: NearbyBar? = null
         try {
             val q = "[out:json];node($id);out body;>;out skel;"
             val resp = service.barDetail(q)
@@ -269,19 +327,45 @@ class DataRepository private constructor(
         return nearby
     }
 
-    fun dbBars() : LiveData<List<BarItem>?> {
+    fun dbBars(): LiveData<List<BarItem>?> {
         return cache.getBars()
     }
+//    sort
+//
+//    fun getBarsDesc(): LiveData<List<BarItem>?> {
+//        return cache.getBarsNameDesc()
+//    }
+//
+//    fun getBarsAsc(): LiveData<List<BarItem>?> {
+//        return cache.getBarsNameAsc()
+//    }
+//
+//    fun getUsersDesc(): LiveData<List<BarItem>?> {
+//        return cache.getUsersDesc()
+//    }
+//
+//    fun getUsersAsc(): LiveData<List<BarItem>?> {
+//        return cache.getUsersAsc()
+//    }
+//
+//    fun getDistanceDesc(): LiveData<List<BarItem>?> {
+//        return cache.getDistanceDesc()
+//    }
+//
+//    fun getDistanceAsc(): LiveData<List<BarItem>?> {
+//        return cache.getDistanceAsc()
+//    }
 
-    fun dbFriends(): LiveData<List<Contact>?>{
+
+    fun dbFriends(): LiveData<List<Contact>?> {
         return cache.getFriends()
     }
 
-    fun getDbUsers(id: String?): Int?{
+    fun getDbUsers(id: String?, onError: (error: String) -> Unit): Int? {
         return cache.getUsers(id)
     }
 
-    companion object{
+    companion object {
         @Volatile
         private var INSTANCE: DataRepository? = null
 
@@ -297,8 +381,8 @@ class DataRepository private constructor(
         }
 
         @SuppressLint("SimpleDateFormat")
-        fun timestampToDate(time: Long): String{
-            val netDate = Date(time*1000)
+        fun timestampToDate(time: Long): String {
+            val netDate = Date(time * 1000)
             return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(netDate)
         }
     }

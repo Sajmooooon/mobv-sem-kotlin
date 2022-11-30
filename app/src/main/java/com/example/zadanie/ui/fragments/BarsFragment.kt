@@ -1,6 +1,7 @@
 package com.example.zadanie.ui.fragments
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
@@ -16,19 +17,27 @@ import com.example.zadanie.databinding.FragmentBarsBinding
 import com.example.zadanie.helpers.Injection
 import com.example.zadanie.helpers.PreferenceData
 import com.example.zadanie.ui.viewmodels.BarsViewModel
+import com.example.zadanie.ui.viewmodels.data.MyLocation
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class BarsFragment : Fragment() {
 //    private lateinit var binding: FragmentBarsBinding
     private var _binding: FragmentBarsBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewmodel: BarsViewModel
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
+                if(viewmodel.locationBtn.value == true){
+                    Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
+
+                }
                 // Precise location access granted.
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
@@ -51,6 +60,8 @@ class BarsFragment : Fragment() {
             this,
             Injection.provideViewModelFactory(requireContext())
         ).get(BarsViewModel::class.java)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
     }
 
 
@@ -71,7 +82,8 @@ class BarsFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_to_login)
             return
         }
-
+//        zmazat pri uprave sortu
+//        viewmodel.refreshData()
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
@@ -89,6 +101,7 @@ class BarsFragment : Fragment() {
                 if (checkPermissions()) {
                     it.findNavController().navigate(R.id.action_to_locate)
                 } else {
+                    viewmodel.switch()
                     locationPermissionRequest.launch(
                         arrayOf(
                             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -99,18 +112,76 @@ class BarsFragment : Fragment() {
 
             }
             bnd.addFriendBtn.setOnClickListener{
-                it.findNavController().navigate(R.id.action_to_add)
+                if (checkPermissions()) {
+//                    viewmodel.loading.postValue(true)
+//                    fusedLocationClient.getCurrentLocation(
+//                        CurrentLocationRequest.Builder().setDurationMillis(30000)
+//                            .setMaxUpdateAgeMillis(60000).build(), null
+//                    ).addOnSuccessListener {
+//                        it?.let {
+//                            viewmodel.getDistance(it.latitude, it.longitude)
+//                        } ?: viewmodel.loading.postValue(false)
+//                    }
+                    loadData()
+//                    viewmodel.sort()
+//                    viewmodel.sortByUsers()
+
+                }
+                else{
+                    locationPermissionRequest.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }
+//                viewmodel.sortByBar()
+
+
+//                viewmodel.sortByName()
+//                viewmodel.refreshData()
+//                it.findNavController().navigate(R.id.action_to_add)
             }
         }
 
         viewmodel.loading.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = it
         }
-
+//        observovanie zmeny sortu
+        viewmodel.sortType.observe(viewLifecycleOwner){
+            viewmodel.sort()
+        }
+//        pri nacitani novych dat - sort
+//        viewmodel.bars.observe(viewLifecycleOwner){
+//            viewmodel.sort()
+//        }
         viewmodel.message.observe(viewLifecycleOwner) {
             if (PreferenceData.getInstance().getUserItem(requireContext()) == null) {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
+        }
+        viewmodel.myLocation.observe(viewLifecycleOwner){
+//            viewmodel.sortBy("distanceAsc","distanceDesc")
+            viewmodel.getDistance()
+            viewmodel.sortBy("distanceAsc","distanceDesc")
+            viewmodel.loading.postValue(false)
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun loadData() {
+        if (checkPermissions()) {
+            viewmodel.loading.postValue(true)
+            fusedLocationClient.getCurrentLocation(
+                CurrentLocationRequest.Builder().setDurationMillis(30000)
+                    .setMaxUpdateAgeMillis(60000).build(), null
+            ).addOnSuccessListener {
+                it?.let {
+                    viewmodel.myLocation.postValue(MyLocation(it.latitude, it.longitude))
+
+                } ?: viewmodel.loading.postValue(false)
+            }
+
         }
     }
 

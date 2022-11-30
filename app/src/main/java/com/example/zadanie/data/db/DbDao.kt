@@ -36,21 +36,21 @@ interface DbDao {
 
 //    sort
 
-    @Query("SELECT * FROM bars order by users DESC, name ASC")
-    fun getBarsUsersDesc(): LiveData<List<BarItem>?>
-
-    @Query("SELECT * FROM bars order by users ASC, name ASC")
-    fun getBarsUsersAsc(): LiveData<List<BarItem>?>
-
-    @Query("SELECT * FROM bars order by name DESC")
-    fun getBarsNameDesc(): LiveData<List<BarItem>?>
-
-    @Query("SELECT * FROM bars order by name ASC")
-    fun getBarsNameAsc(): LiveData<List<BarItem>?>
-
-    @Query("SELECT * FROM bars order by type DESC")
-    fun getBarsTypeDesc(): LiveData<List<BarItem>?>
-
-    @Query("SELECT * FROM bars order by type ASC")
-    fun getBarsTypeAsc(): LiveData<List<BarItem>?>
+//    @Query("SELECT * FROM bars order by users DESC")
+//    fun getBarsUsersDesc(): LiveData<List<BarItem>?>
+//
+//    @Query("SELECT * FROM bars order by users ASC")
+//    fun getBarsUsersAsc(): LiveData<List<BarItem>?>
+//
+//    @Query("SELECT * FROM bars order by name DESC")
+//    fun getBarsNameDesc(): LiveData<List<BarItem>?>
+//
+//    @Query("SELECT * FROM bars order by name ASC")
+//    fun getBarsNameAsc(): LiveData<List<BarItem>?>
+//
+//    @Query("SELECT * FROM bars order by distance DESC")
+//    fun getDistanceDesc(): LiveData<List<BarItem>?>
+//
+//    @Query("SELECT * FROM bars order by distance ASC")
+//    fun getDistanceAsc(): LiveData<List<BarItem>?>
 }
