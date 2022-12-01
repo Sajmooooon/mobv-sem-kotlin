@@ -113,6 +113,8 @@ class LocateFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_to_login)
             return
         }
+//        val anim = binding.lottieLoading
+//        anim.playAnimation()
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
@@ -125,19 +127,37 @@ class LocateFragment : Fragment() {
                 loadData()
             }
 
-            bnd.checkme.setOnClickListener {
-                if (checkBackgroundPermissions()) {
+//            bnd.checkme.setOnClickListener {
+//                if (checkBackgroundPermissions()) {
+////                    binding.lottieAnim.isVisible = true
+//
+//
+////                    binding.lottieAnim.isVisible = true
+//                    viewmodel.checkMe()
+//                } else {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                        permissionDialog()
+//                    }
+//                }
+//            }
+
+            bnd.lottieLoading.setOnClickListener {
+                viewmodel.myBar.value?.let {
+                    if (checkBackgroundPermissions()) {
 //                    binding.lottieAnim.isVisible = true
 
 
 //                    binding.lottieAnim.isVisible = true
-                    viewmodel.checkMe()
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        permissionDialog()
+                        viewmodel.checkMe()
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            permissionDialog()
+                        }
                     }
                 }
+
             }
+
             bnd.nearbyBars.events = object : NearbyBarsEvents {
                 override fun onBarClick(nearbyBar: NearbyBar) {
                     viewmodel.myBar.postValue(nearbyBar)
@@ -148,6 +168,20 @@ class LocateFragment : Fragment() {
         viewmodel.loading.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = it
         }
+//        pri nacitani dat sa stopne animacia
+        viewmodel.myBar.observe(viewLifecycleOwner) {
+//            here 3
+            viewmodel.myBar.value?.let {
+                val anim = binding.lottieLoading
+//                anim.setMaxFrame(60)
+//                anim.playAnimation()
+                anim.loop(false)
+//                anim.speed = 5F
+                anim.progress = 1F
+//                anim.visibility = View.VISIBLE
+            }
+        }
+
         viewmodel.checkedIn.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 if (it) {
@@ -176,12 +210,24 @@ class LocateFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun loadData() {
         if (checkPermissions()) {
+//            val anim = binding.lottieLoading
+//            anim.setMaxFrame(40)
             viewmodel.loading.postValue(true)
+
             fusedLocationClient.getCurrentLocation(
                 CurrentLocationRequest.Builder().setDurationMillis(30000)
                     .setMaxUpdateAgeMillis(60000).build(), null
             ).addOnSuccessListener {
                 it?.let {
+//                    here2
+//                    val anim = binding.lottieLoading
+//                    anim.setMaxFrame(60)
+//                    anim.loop(false)
+//                    anim.speed = 5F
+//                    anim.progress = 0F
+
+//                    anim.pauseAnimation()
+//                    anim.repeatMode =
                     viewmodel.myLocation.postValue(MyLocation(it.latitude, it.longitude))
                 } ?: viewmodel.loading.postValue(false)
             }

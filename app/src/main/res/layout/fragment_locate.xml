@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -9,7 +10,7 @@
             type="com.example.zadanie.ui.viewmodels.LocateViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -49,6 +50,18 @@
                 android:layout_height="wrap_content"
                 android:padding="12dp">
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_loading"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="5dp"
+                    android:scaleType="centerInside"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/name"
+                    app:lottie_autoPlay="true"
+                    android:visibility="visible"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/maploading" />
                 <TextView
                     android:id="@+id/name"
                     style="@style/TextAppearance.AppCompat.Medium"
@@ -70,14 +83,19 @@
                     app:layout_constraintTop_toBottomOf="@id/name" />
 
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/checkme"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:enabled="@{model.myBar!=null}"
-                    android:text="I'm here"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/name" />
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/checkme"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:enabled="@{model.myBar!=null}"-->
+<!--                    android:text="I'm here"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/name">-->
+
+
+<!--                </com.google.android.material.button.MaterialButton>-->
+
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -106,8 +124,7 @@
             app:layout_constraintTop_toBottomOf="@id/detailBox"
             app:lottie_autoPlay="true"
             app:lottie_loop="false"
-            app:lottie_rawRes="@raw/map"
-            />
+            app:lottie_rawRes="@raw/map" />
 
         <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
 
