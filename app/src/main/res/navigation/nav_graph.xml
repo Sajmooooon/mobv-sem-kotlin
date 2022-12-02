@@ -41,27 +41,42 @@
         android:label="FriendsFragment" />
     <action
         android:id="@+id/action_to_login"
-        app:destination="@id/login_fragment" />
+        app:destination="@id/login_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/login_fragment"
+        />
     <action
         android:id="@+id/action_to_sign_up"
-        app:destination="@id/sign_up_fragment" />
+        app:destination="@id/sign_up_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/sign_up_fragment"/>
     <action
         android:id="@+id/action_to_bars"
-        app:destination="@id/bars_fragment" />
+        app:destination="@id/bars_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/bars_fragment"/>
     <action
         android:id="@+id/action_to_locate"
-        app:destination="@id/locate_fragment" />
+        app:destination="@id/locate_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/action_to_locate"/>
 
     <action
         android:id="@+id/action_to_detail"
-        app:destination="@id/detail_fragment" />
+        app:destination="@id/detail_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/action_to_detail"/>
     <action
         android:id="@+id/action_to_add"
-        app:destination="@id/add_friend_fragment" />
+        app:destination="@id/add_friend_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/action_to_add"/>
 
     <action
         android:id="@+id/action_to_friends"
-        app:destination="@id/friends_fragment" />
+        app:destination="@id/friends_fragment"
+        app:popUpToInclusive="true"
+        app:popUpTo="@id/action_to_friends" />
 
 
 </navigation>

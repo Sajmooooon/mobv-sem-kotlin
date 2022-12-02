@@ -23,6 +23,8 @@ class MainActivity : AppCompatActivity() {
             .setupWithNavController(navController)
 
 
+
+
 //        addMenuProvider(object : MenuProvider {
 //            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
 //                // Add menu items here

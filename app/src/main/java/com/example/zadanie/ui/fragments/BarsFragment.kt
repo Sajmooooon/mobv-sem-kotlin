@@ -62,6 +62,7 @@ class BarsFragment : Fragment() {
         ).get(BarsViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+
     }
 
 
@@ -88,44 +89,41 @@ class BarsFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
         }.also { bnd ->
-            bnd.logout.setOnClickListener {
-                PreferenceData.getInstance().clearData(requireContext())
-                Navigation.findNavController(it).navigate(R.id.action_to_login)
-            }
-
-            bnd.swiperefresh.setOnRefreshListener {
-                viewmodel.refreshData()
-            }
-
-            bnd.findBar.setOnClickListener {
-                if (checkPermissions()) {
-                    it.findNavController().navigate(R.id.action_to_locate)
-                } else {
-                    viewmodel.switch()
-                    locationPermissionRequest.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
+//            bnd.bottomNavigationView.itemIconTintList = null;
+            bnd.bottomNavigation.setOnItemSelectedListener {
+                // do stuff
+                when(it.itemId){
+                    R.id.menuBars ->{
+                        Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
+                        return@setOnItemSelectedListener true
+                    }
+                    R.id.menuFriends ->{
+                        Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
+                        return@setOnItemSelectedListener true
+                    }
+                    R.id.menuLocation ->{
+                        Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
+                        return@setOnItemSelectedListener true
+                    }
                 }
-
+                false
             }
-            bnd.addFriendBtn.setOnClickListener{
-                if (checkPermissions()) {
-//                    viewmodel.loading.postValue(true)
-//                    fusedLocationClient.getCurrentLocation(
-//                        CurrentLocationRequest.Builder().setDurationMillis(30000)
-//                            .setMaxUpdateAgeMillis(60000).build(), null
-//                    ).addOnSuccessListener {
-//                        it?.let {
-//                            viewmodel.getDistance(it.latitude, it.longitude)
-//                        } ?: viewmodel.loading.postValue(false)
-//                    }
-                    loadData()
-//                    viewmodel.sort()
-//                    viewmodel.sortByUsers()
+//            bnd.bottomNavigation.selectedItemId(R.id.menuBars)
+            bnd.bottomNavigation.getMenu().findItem(R.id.menuBars).setChecked(true);
 
+//            sort
+            bnd.sortName.setOnClickListener {
+                //                viewmodel.sortByBar()
+
+                viewmodel.sortBy("barAsc","barDesc")
+            }
+            bnd.sortUsers.setOnClickListener {
+                viewmodel.sortBy("usersAsc","usersDesc")
+            }
+
+            bnd.sortDistance.setOnClickListener {
+                if (checkPermissions()) {
+                    loadData()
                 }
                 else{
                     locationPermissionRequest.launch(
@@ -135,13 +133,50 @@ class BarsFragment : Fragment() {
                         )
                     )
                 }
-//                viewmodel.sortByBar()
-
-
-//                viewmodel.sortByName()
-//                viewmodel.refreshData()
-//                it.findNavController().navigate(R.id.action_to_add)
             }
+
+            bnd.logout.setOnClickListener {
+                PreferenceData.getInstance().clearData(requireContext())
+                Navigation.findNavController(it).navigate(R.id.action_to_login)
+            }
+
+            bnd.swiperefresh.setOnRefreshListener {
+                viewmodel.refreshData()
+            }
+
+//
+//            bnd.findBar.setOnClickListener {
+//                if (checkPermissions()) {
+//                    it.findNavController().navigate(R.id.action_to_locate)
+//                } else {
+//                    viewmodel.switch()
+//                    locationPermissionRequest.launch(
+//                        arrayOf(
+//                            Manifest.permission.ACCESS_FINE_LOCATION,
+//                            Manifest.permission.ACCESS_COARSE_LOCATION
+//                        )
+//                    )
+//                }
+//
+//            }
+//            bnd.addFriendBtn.setOnClickListener{
+//                if (checkPermissions()) {
+//
+//                    loadData()
+//
+//
+//                }
+//                else{
+//                    locationPermissionRequest.launch(
+//                        arrayOf(
+//                            Manifest.permission.ACCESS_FINE_LOCATION,
+//                            Manifest.permission.ACCESS_COARSE_LOCATION
+//                        )
+//                    )
+//                }
+//
+//                it.findNavController().navigate(R.id.action_to_add)
+//            }
         }
 
         viewmodel.loading.observe(viewLifecycleOwner) {
@@ -160,6 +195,7 @@ class BarsFragment : Fragment() {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
         }
+//       ked sa naplni mylocation tak sa sortnu data
         viewmodel.myLocation.observe(viewLifecycleOwner){
 //            viewmodel.sortBy("distanceAsc","distanceDesc")
             viewmodel.getDistance()

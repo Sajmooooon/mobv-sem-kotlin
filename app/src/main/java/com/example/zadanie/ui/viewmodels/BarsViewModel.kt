@@ -86,15 +86,6 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
         locationBtn.postValue(true)
     }
 
-
-    fun sortByBar() {
-        if (sortType.value == "barAsc") sortType.value = "barDesc" else sortType.value = "barAsc"
-    }
-
-    fun sortByUsers() {
-        if (sortType.value == "usersAsc") sortType.value = "usersDesc" else sortType.value = "usersAsc"
-    }
-
     fun sortBy(cond1: String, cond2:String) {
         if (sortType.value == cond1) sortType.value = cond2 else sortType.value = cond1
     }
@@ -121,14 +112,7 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
             repository.apiBarList { _message.postValue(Evento(it)) }
             loading.postValue(false)
         }
-//        bars =
-//        liveData {
-//            loading.postValue(true)
-//
-//            loading.postValue(false)
-//
-//            emitSource(repository.getBarsDesc())
-//        }
+
 
     }
 

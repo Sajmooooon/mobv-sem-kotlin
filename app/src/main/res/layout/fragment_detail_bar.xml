@@ -13,36 +13,76 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="24dp">
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
 
-        <TextView
-            android:id="@+id/header_title"
-            style="@style/TextAppearance.Material3.HeadlineMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@{model.bar.name}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Bar Name" />
-
-        <TextView
-            android:id="@+id/back"
-            style="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            app:layout_constraintBottom_toBottomOf="@id/header_title"
+            android:layout_height="60dp"
+            android:background="@color/teal_700"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/header_title" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <TextView
+                android:id="@+id/header_title"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="@{model.bar.name}"
+                tools:text="Bar Name"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="@id/header_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/header_title"
+                android:src="@drawable/ic_baseline_arrow_back_24" />
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+<!--        <TextView-->
+<!--            android:id="@+id/header_title"-->
+<!--            style="@style/TextAppearance.Material3.HeadlineMedium"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@{model.bar.name}"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            tools:text="Bar Name" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/back"-->
+<!--            style="@style/TextAppearance.Material3.BodyMedium"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:padding="10dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/header"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@id/header" />-->
 
         <com.google.android.material.chip.Chip
             android:id="@+id/type"
             android:layout_width="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
             android:layout_height="wrap_content"
             android:text="@{model.type}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/header_title" />
+            app:layout_constraintTop_toBottomOf="@id/header" />
 
 
         <TextView
@@ -61,6 +101,8 @@
             android:id="@+id/mapButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
             android:text="@string/zobrazit_na_mape"
             android:visibility="@{model.loading ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
@@ -72,13 +114,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:indeterminate="true"
+            android:layout_marginEnd="24dp"
             android:visibility="@{model.loading ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="@id/mapButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/back" />
+            app:layout_constraintTop_toBottomOf="@id/header" />
 
         <com.example.zadanie.ui.widget.detailList.DetailRecyclerView
             detail_items="@{model.details}"
+            android:padding="24dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

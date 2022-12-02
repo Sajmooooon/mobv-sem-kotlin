@@ -120,9 +120,29 @@ class LocateFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
         }.also { bnd ->
-            bnd.back.setOnClickListener {
-                it.findNavController().popBackStack()
+            bnd.bottomNavigation.setOnItemSelectedListener {
+                // do stuff
+                when(it.itemId){
+                    R.id.menuBars ->{
+                        Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
+                        return@setOnItemSelectedListener true
+                    }
+                    R.id.menuFriends ->{
+                        Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
+                        return@setOnItemSelectedListener true
+                    }
+                    R.id.menuLocation ->{
+                        Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
+                        return@setOnItemSelectedListener true
+                    }
+                }
+                false
             }
+            bnd.bottomNavigation.getMenu().findItem(R.id.menuLocation).setChecked(true);
+
+//            bnd.back.setOnClickListener {
+//                it.findNavController().popBackStack()
+//            }
             bnd.swiperefresh.setOnRefreshListener {
                 loadData()
             }
@@ -259,9 +279,9 @@ class LocateFragment : Fragment() {
         geofencingClient.addGeofences(request, geofenceIntent).run {
             addOnSuccessListener {
 //                here
-                val anim = binding.lottieAnim
-                anim.isVisible = true
-                anim.resumeAnimation()
+//                val anim = binding.lottieAnim
+//                anim.isVisible = true
+//                anim.resumeAnimation()
 
 
 //                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)

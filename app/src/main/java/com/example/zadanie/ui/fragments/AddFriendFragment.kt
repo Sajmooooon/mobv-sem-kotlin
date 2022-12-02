@@ -49,7 +49,6 @@ class AddFriendFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 //        kontrola usera
         val x = PreferenceData.getInstance().getUserItem(requireContext())
-        print("userid here ${x?.uid}")
         if ((x?.uid ?: "").isBlank()) {
             Navigation.findNavController(view).navigate(R.id.action_to_login)
             return
@@ -58,6 +57,12 @@ class AddFriendFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             model = addFriendViewModel
         }
+        binding.back.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
+
+
+
 
         binding.add.setOnClickListener {
             if (binding.username.text.toString().isNotBlank()) {
@@ -72,11 +77,11 @@ class AddFriendFragment : Fragment() {
             }
         }
 
-        binding.friendList.setOnClickListener {
-
-//            it.findNavController().navigate(R.id.action_to_locate)
-            it.findNavController().navigate(R.id.action_to_friends)
-        }
+//        binding.friendList.setOnClickListener {
+//
+////            it.findNavController().navigate(R.id.action_to_locate)
+//            it.findNavController().navigate(R.id.action_to_friends)
+//        }
 
     }
     override fun onDestroyView() {

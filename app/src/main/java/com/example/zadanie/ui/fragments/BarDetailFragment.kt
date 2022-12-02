@@ -75,6 +75,9 @@ class BarDetailFragment : Fragment() {
                     )
                 )
             }
+            bnd.back.setOnClickListener {
+                it.findNavController().popBackStack()
+            }
         }
 
         viewModel.loadBar(navigationArgs.id)
