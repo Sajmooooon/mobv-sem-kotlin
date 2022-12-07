@@ -6,6 +6,8 @@
         <variable
             name="model"
             type="com.example.zadanie.ui.viewmodels.BarsViewModel" />
+        <import type="android.view.View" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -53,15 +55,26 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
+            android:visibility="@{model.loading ? View.INVISIBLE : View.VISIBLE}"
             android:padding="15sp"
             app:layout_constraintTop_toBottomOf="@+id/header">
 
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="40sp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:background="@drawable/button_sort_zero"
+                android:src="@drawable/ic_baseline_sort_24"
+                />
             <Button
                 android:id="@+id/sort_name"
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="40sp"
                 android:layout_weight="1"
+
+                android:enabled="@{model.bars!=null}"
                 android:background="@drawable/button_sort_first"
                 android:text="Name"
                 android:textAlignment="center"
@@ -75,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40sp"
                 android:layout_weight="1"
+                android:enabled="@{model.bars!=null}"
                 android:background="@drawable/button_sort_second"
                 android:text="Distance"
                 android:textAlignment="center"
@@ -86,6 +100,7 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="40sp"
+                android:enabled="@{model.bars!=null}"
                 android:layout_weight="1"
                 android:background="@drawable/button_sort_third"
                 android:text="Users"

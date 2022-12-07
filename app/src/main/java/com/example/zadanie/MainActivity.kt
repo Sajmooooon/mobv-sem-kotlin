@@ -1,11 +1,18 @@
 package com.example.zadanie
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.MenuProvider
+import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -23,7 +30,14 @@ class MainActivity : AppCompatActivity() {
             .setupWithNavController(navController)
 
 
-
+//        navController.addOnDestinationChangedListener { _, nd: NavDestination, _ ->
+//            if (nd.id == R.id.bars_fragment || nd.id == R.id.friends_fragment || nd.id == R.id.locate_fragment) {
+////                navView.visibility = View.VISIBLE
+//                Log.d("visible", "true")
+//            } else {
+//                Log.d("visible", "false")
+//            }
+//        }
 
 //        addMenuProvider(object : MenuProvider {
 //            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -51,4 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return Navigation.findNavController(this, R.id.nav_host_fragment).navigateUp()
     }
+
+
 }
+

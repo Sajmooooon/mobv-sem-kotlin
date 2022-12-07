@@ -10,12 +10,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import com.example.zadanie.R
 import com.example.zadanie.databinding.FragmentAddFriendBinding
-import com.example.zadanie.databinding.FragmentDetailBarBinding
-import com.example.zadanie.databinding.FragmentLoginBinding
 import com.example.zadanie.helpers.Injection
 import com.example.zadanie.helpers.PreferenceData
 import com.example.zadanie.ui.viewmodels.AddFriendViewModel
-import com.example.zadanie.ui.viewmodels.AuthViewModel
 
 
 class AddFriendFragment : Fragment() {
@@ -23,11 +20,11 @@ class AddFriendFragment : Fragment() {
     private var _binding: FragmentAddFriendBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var addFriendViewModel: AddFriendViewModel
+    private lateinit var viewmodel: AddFriendViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addFriendViewModel = ViewModelProvider(
+        viewmodel = ViewModelProvider(
             this,
             Injection.provideViewModelFactory(requireContext())
         ).get(AddFriendViewModel::class.java)
@@ -55,25 +52,31 @@ class AddFriendFragment : Fragment() {
         }
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
-            model = addFriendViewModel
+            model = viewmodel
         }
         binding.back.setOnClickListener {
             it.findNavController().popBackStack()
         }
 
 
-
+        viewmodel.friendAdd.observe(viewLifecycleOwner) {
+            it?.getContentIfNotHandled()?.let {
+                if (it) {
+                    viewmodel.show("You add friend successfully.")
+                }
+            }
+        }
 
         binding.add.setOnClickListener {
             if (binding.username.text.toString().isNotBlank()) {
                 //it.findNavController().popBackStack(R.id.bars_fragment,false)
-                addFriendViewModel.add(
+                viewmodel.add(
                     binding.username.text.toString(),
 
                 )
             }
             else {
-            addFriendViewModel.show("Fill in username")
+            viewmodel.show("Fill in username")
             }
         }
 

@@ -36,7 +36,8 @@ class DetailAdapter() : RecyclerView.Adapter<DetailAdapter.BarDetailItemViewHold
     ) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(item: BarDetailItem) {
-            itemView.findViewById<TextView>(R.id.name).text = item.key
+            val name = item.key.capitalize()+":"
+            itemView.findViewById<TextView>(R.id.name).text = name
             itemView.findViewById<TextView>(R.id.value).text = item.value
         }
     }

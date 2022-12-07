@@ -13,14 +13,14 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
     val message: LiveData<Evento<String>>
         get() = _message
 
-    val locationBtn = MutableLiveData<Boolean>(false)
+    var locationBtn = false
+    var alreadySorted = false
     val myLocation = MutableLiveData<MyLocation>(null)
     var sortType: MutableLiveData<String> = MutableLiveData("barAsc")
     val loading = MutableLiveData(false)
-
-
     val bars = MutableLiveData<List<BarItem>?>(null)
 
+//    inicializacny blok
     init {
         viewModelScope.launch {
             loading.postValue(true)
@@ -76,14 +76,19 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
                     tmp = bar.sortedBy { it.name }
                 }
             }
+            alreadySorted = true
             bars.postValue(tmp)
         }
 
     }
 
+    fun sortos(){
+        alreadySorted = false
+    }
+
     //    kliknutie tlacidla na prepnutie lokacii - aby automaticky preplo po prijati permissi
     fun switch() {
-        locationBtn.postValue(true)
+        locationBtn = true
     }
 
     fun sortBy(cond1: String, cond2:String) {
@@ -92,6 +97,7 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
 
     fun getDistance() {
         myLocation.value?.let{ loc->
+//            Log.d("myloc",""+myLocation.value)
             bars.value?.let { bar ->
                 val tmp = bar.map {
                     it.distance = it.distanceTo(loc)
@@ -99,7 +105,7 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
                 }
 
                 bars.postValue(tmp)
-                Log.d("tmp","tmp"+bars.value)
+//                Log.d("tmp","tmp"+bars.value)
             }
         }
         sort()
@@ -107,13 +113,13 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
 
     fun refreshData() {
         viewModelScope.launch {
+//            refresh.postValue(false)
             loading.postValue(true)
 //            repository.apiBarListSorted()
             repository.apiBarList { _message.postValue(Evento(it)) }
             loading.postValue(false)
+//            refresh.postValue(true)
         }
-
-
     }
 
 

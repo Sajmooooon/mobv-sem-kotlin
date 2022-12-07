@@ -48,5 +48,6 @@ class BarsRecyclerView : RecyclerView {
 fun BarsRecyclerView.applyItems(
     bars: List<BarItem>?
 ) {
+    (adapter as BarsAdapter).items = emptyList()
     (adapter as BarsAdapter).items = bars ?: emptyList()
 }

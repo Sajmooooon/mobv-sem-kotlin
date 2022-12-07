@@ -1,5 +1,6 @@
 package com.example.zadanie.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.zadanie.data.DataRepository
 import com.example.zadanie.data.db.model.BarItem
@@ -14,7 +15,8 @@ class LocateViewModel(private val repository: DataRepository): ViewModel() {
         get() = _message
 
     val loading = MutableLiveData(false)
-
+    val emptyBar = MutableLiveData(false)
+    val startRest = MutableLiveData(false)
     val myLocation = MutableLiveData<MyLocation>(null)
     val myBar= MutableLiveData<NearbyBar>(null)
 
@@ -27,12 +29,23 @@ class LocateViewModel(private val repository: DataRepository): ViewModel() {
         liveData {
             loading.postValue(true)
             it?.let {
+                startRest.postValue(true)
                 val b = repository.apiNearbyBars(it.lat,it.lon,{_message.postValue(Evento(it))})
                 emit(b)
+                startRest.postValue(false)
+//                if b empty set
+                if (b.isEmpty()){
+                    emptyBar.postValue(true)
+                }
+                else{
+                    emptyBar.postValue(false)
+                }
+
                 if (myBar.value==null){
                     myBar.postValue(b.firstOrNull())
                 }
             } ?: emit(listOf())
+
             loading.postValue(false)
         }
     }

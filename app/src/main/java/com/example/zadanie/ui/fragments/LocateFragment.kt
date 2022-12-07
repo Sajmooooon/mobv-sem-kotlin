@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -44,6 +45,8 @@ class LocateFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var geofencingClient: GeofencingClient
 
+//  background location - sa vyuziva ked constantly shares location with other users
+//  kontrola ci sa ziskala likacia a ak nie vypise sa hlaska
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -66,6 +69,9 @@ class LocateFragment : Fragment() {
             Injection.provideViewModelFactory(requireContext())
         ).get(LocateViewModel::class.java)
 
+
+//        vytvorenie instancie providera
+//      provider na ziskanie poslednej polohy zariadenia
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         geofencingClient = LocationServices.getGeofencingClient(requireActivity())
     }
@@ -80,7 +86,6 @@ class LocateFragment : Fragment() {
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                Log.e("Animation:", "end")
                 anim.isVisible = false
             }
 
@@ -100,7 +105,6 @@ class LocateFragment : Fragment() {
     ): View {
         _binding = FragmentLocateBinding.inflate(inflater, container, false)
         anim()
-
         return binding.root
     }
 
@@ -147,27 +151,10 @@ class LocateFragment : Fragment() {
                 loadData()
             }
 
-//            bnd.checkme.setOnClickListener {
-//                if (checkBackgroundPermissions()) {
-////                    binding.lottieAnim.isVisible = true
-//
-//
-////                    binding.lottieAnim.isVisible = true
-//                    viewmodel.checkMe()
-//                } else {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                        permissionDialog()
-//                    }
-//                }
-//            }
 
             bnd.lottieLoading.setOnClickListener {
                 viewmodel.myBar.value?.let {
                     if (checkBackgroundPermissions()) {
-//                    binding.lottieAnim.isVisible = true
-
-
-//                    binding.lottieAnim.isVisible = true
                         viewmodel.checkMe()
                     } else {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -188,17 +175,32 @@ class LocateFragment : Fragment() {
         viewmodel.loading.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = it
         }
+        viewmodel.emptyBar.observe(viewLifecycleOwner) {
+
+            if(viewmodel.emptyBar.value == true){
+                binding.lottieLoading.isGone = true
+            }
+
+        }
+//        pri zacati REST
+        viewmodel.startRest.observe(viewLifecycleOwner) {
+           if(viewmodel.startRest.value == true) {
+                val anim = binding.lottieLoading
+                anim.playAnimation()
+                anim.setMinAndMaxFrame(20,40)
+//                anim.progress = 1F
+            }
+        }
+
+
 //        pri nacitani dat sa stopne animacia
         viewmodel.myBar.observe(viewLifecycleOwner) {
-//            here 3
             viewmodel.myBar.value?.let {
                 val anim = binding.lottieLoading
-//                anim.setMaxFrame(60)
-//                anim.playAnimation()
-                anim.loop(false)
-//                anim.speed = 5F
-                anim.progress = 1F
-//                anim.visibility = View.VISIBLE
+                anim.playAnimation()
+                anim.speed = 2F
+                anim.setMinAndMaxFrame(40,60)
+//                anim.progress = 1F
             }
         }
 
@@ -223,6 +225,10 @@ class LocateFragment : Fragment() {
             if (PreferenceData.getInstance().getUserItem(requireContext()) == null) {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
+//            if(!viewmodel.message.value.toString().isNullOrEmpty()){
+//                binding.lottieLoading.isGone = false
+//            }
+
         }
 
     }
@@ -230,26 +236,35 @@ class LocateFragment : Fragment() {
     @SuppressLint("MissingPermission")
     private fun loadData() {
         if (checkPermissions()) {
-//            val anim = binding.lottieLoading
-//            anim.setMaxFrame(40)
-            viewmodel.loading.postValue(true)
+//          pri nacitani sa zapne animacia
+            val anim = binding.lottieLoading
+            anim.isVisible = true
+            anim.playAnimation()
+//            binding.lottieLoading.setMaxFrame(10)
+            anim.setMinAndMaxFrame(0,10)
+//            binding.lottieLoading.speed = 0.5F
+//            binding.lottieLoading.progress = 0.2F
 
+//            binding.lottieLoading.pauseAnimation()
+            viewmodel.loading.postValue(true)
+//            ziskanie presnej lokacie
             fusedLocationClient.getCurrentLocation(
                 CurrentLocationRequest.Builder().setDurationMillis(30000)
                     .setMaxUpdateAgeMillis(60000).build(), null
             ).addOnSuccessListener {
                 it?.let {
-//                    here2
-//                    val anim = binding.lottieLoading
-//                    anim.setMaxFrame(60)
-//                    anim.loop(false)
-//                    anim.speed = 5F
-//                    anim.progress = 0F
-
-//                    anim.pauseAnimation()
-//                    anim.repeatMode =
+//                    binding.lottieLoading.setMaxFrame(20)
+                    anim.playAnimation()
+                    anim.setMinAndMaxFrame(10,20)
+//                    binding.lottieLoading.progress = 0.5F
+//                    binding.lottieLoading.progress = 0.4F
                     viewmodel.myLocation.postValue(MyLocation(it.latitude, it.longitude))
-                } ?: viewmodel.loading.postValue(false)
+                } ?: run{
+                    anim.isGone = true
+                    viewmodel.loading.postValue(false)
+                    viewmodel.show("Cant get Location check GPS")
+
+                }
             }
         }
     }
@@ -259,12 +274,18 @@ class LocateFragment : Fragment() {
         if (!checkPermissions()) {
             viewmodel.show("Geofence failed, permissions not granted.")
         }
+//        sluzi na handlovanie geofende transition
+//        ziska update ked event nastane
         val geofenceIntent = PendingIntent.getBroadcast(
             requireContext(), 0,
             Intent(requireContext(), GeofenceBroadcastReceiver::class.java),
+//           ziskanie rovnakeho pendingu
             PendingIntent.FLAG_UPDATE_CURRENT or FLAG_MUTABLE
         )
-
+//        vytvorenie geofence
+//        vytvori sa kruh v okolo 300 metrov
+//        expiration duration sa nastavi na den
+//        transition type - alert ked odide z kruhu
         val request = GeofencingRequest.Builder().apply {
             addGeofence(
                 Geofence.Builder()
@@ -276,17 +297,18 @@ class LocateFragment : Fragment() {
             )
         }.build()
 
+//        pridanie geofenciungu
+//        kontrola ci sa vytvoril geofence alebo nie
         geofencingClient.addGeofences(request, geofenceIntent).run {
             addOnSuccessListener {
-//                here
-//                val anim = binding.lottieAnim
-//                anim.isVisible = true
-//                anim.resumeAnimation()
-
-
+//              spusti animaciu pri pridani
+                val anim = binding.lottieAnim
+                anim.isVisible = true
+                anim.resumeAnimation()
 //                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
             }
             addOnFailureListener {
+//                binding.lottieLoading.isGone = false
                 viewmodel.show("Geofence failed to create.") //permission is not granted for All times.
                 it.printStackTrace()
             }
@@ -320,6 +342,7 @@ class LocateFragment : Fragment() {
         alertDialog.show()
     }
 
+//    vyzaduje sa pri android 10 alebo vyssich - request background location access
     private fun checkBackgroundPermissions(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ActivityCompat.checkSelfPermission(
@@ -331,6 +354,8 @@ class LocateFragment : Fragment() {
         }
     }
 
+//    kontrola permissi, Fine - co najpresnejsia lokacia, Coarse - max 3 km
+//    kontrola oboch lebo system moze ignorovat samotnu Fine location
     private fun checkPermissions(): Boolean {
         return ActivityCompat.checkSelfPermission(
             requireContext(),

@@ -2,7 +2,6 @@ package com.example.zadanie.ui.viewmodels
 
 import androidx.lifecycle.*
 import com.example.zadanie.data.DataRepository
-import com.example.zadanie.data.db.model.BarItem
 import com.example.zadanie.data.db.model.Contact
 import com.example.zadanie.helpers.Evento
 import kotlinx.coroutines.launch
@@ -14,9 +13,9 @@ class AddFriendViewModel(private val repository: DataRepository) : ViewModel()  
         get() = _message
     val loading = MutableLiveData(false)
 
-    private val _checkedIn = MutableLiveData<Evento<Boolean>>()
-    val checkedIn: LiveData<Evento<Boolean>>
-        get() = _checkedIn
+    private val _friendAdd = MutableLiveData<Evento<Boolean>>()
+    val friendAdd: LiveData<Evento<Boolean>>
+        get() = _friendAdd
 
 
 
@@ -36,7 +35,7 @@ class AddFriendViewModel(private val repository: DataRepository) : ViewModel()  
             repository.apiAddFriend(
                 name,
                 { _message.postValue(Evento(it)) },
-                {_checkedIn.postValue(Evento(it))}
+                {_friendAdd.postValue(Evento(it))}
             )
             loading.postValue(false)
         }

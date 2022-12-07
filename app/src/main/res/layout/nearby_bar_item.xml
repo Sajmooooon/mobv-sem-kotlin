@@ -9,16 +9,27 @@
     android:layout_marginBottom="10dp"
     android:elevation="5dp">
 
+    <ImageView
+        android:id="@+id/bar_img"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_baseline_fastfood_24"
+        />
+
     <TextView
+
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
+        android:paddingStart="7dp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/distance"
+        app:layout_constraintStart_toEndOf="@+id/bar_img"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintEnd_toEndOf="parent"
         style="@style/TextAppearance.AppCompat.Medium"
         tools:text="Bar"
         />
@@ -26,10 +37,9 @@
         android:id="@+id/distance"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@id/name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name"
+        app:layout_constraintBottom_toBottomOf="@+id/type"
         style="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/white"
         tools:text="300"
@@ -39,7 +49,7 @@
         android:id="@+id/type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/bar_img"
         app:layout_constraintTop_toBottomOf="@id/name"/>
 
 

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -23,21 +24,23 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
 class BarsFragment : Fragment() {
-//    private lateinit var binding: FragmentBarsBinding
+    //    private lateinit var binding: FragmentBarsBinding
     private var _binding: FragmentBarsBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewmodel: BarsViewModel
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    //    detekcia ked sa ziskaju permissie na polohu
     private val locationPermissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                if(viewmodel.locationBtn.value == true){
+                if (viewmodel.locationBtn == true) {
                     Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
 
                 }
+//                 pridat kontrolu ked sa spusti sort a prijme sa tak nech sa zosortuje
                 // Precise location access granted.
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
@@ -52,17 +55,18 @@ class BarsFragment : Fragment() {
     }
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//      attach viewmodel to fragment
+//      viewmodelprovider utility that provides viewmodel for scope
 
         viewmodel = ViewModelProvider(
+//            prvy parameter scope that owns viewmodelstore
+//            druhy je Factory
             this,
             Injection.provideViewModelFactory(requireContext())
         ).get(BarsViewModel::class.java)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-
     }
 
 
@@ -83,8 +87,7 @@ class BarsFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_to_login)
             return
         }
-//        zmazat pri uprave sortu
-//        viewmodel.refreshData()
+
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
@@ -92,18 +95,30 @@ class BarsFragment : Fragment() {
 //            bnd.bottomNavigationView.itemIconTintList = null;
             bnd.bottomNavigation.setOnItemSelectedListener {
                 // do stuff
-                when(it.itemId){
-                    R.id.menuBars ->{
+                when (it.itemId) {
+                    R.id.menuBars -> {
                         Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
                         return@setOnItemSelectedListener true
                     }
-                    R.id.menuFriends ->{
+                    R.id.menuFriends -> {
                         Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
                         return@setOnItemSelectedListener true
                     }
-                    R.id.menuLocation ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
-                        return@setOnItemSelectedListener true
+                    R.id.menuLocation -> {
+                        if (checkPermissions()) {
+                            Navigation.findNavController(requireView())
+                                .navigate(R.id.action_to_locate)
+                            return@setOnItemSelectedListener true
+                        } else {
+                            viewmodel.switch()
+                            locationPermissionRequest.launch(
+                                arrayOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            )
+                        }
+
                     }
                 }
                 false
@@ -113,26 +128,14 @@ class BarsFragment : Fragment() {
 
 //            sort
             bnd.sortName.setOnClickListener {
-                //                viewmodel.sortByBar()
-
-                viewmodel.sortBy("barAsc","barDesc")
+                viewmodel.sortBy("barAsc", "barDesc")
             }
             bnd.sortUsers.setOnClickListener {
-                viewmodel.sortBy("usersAsc","usersDesc")
+                viewmodel.sortBy("usersAsc", "usersDesc")
             }
 
             bnd.sortDistance.setOnClickListener {
-                if (checkPermissions()) {
                     loadData()
-                }
-                else{
-                    locationPermissionRequest.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
-                }
             }
 
             bnd.logout.setOnClickListener {
@@ -179,27 +182,41 @@ class BarsFragment : Fragment() {
 //            }
         }
 
+//        viewLifecycleOwner reprezentuje fragments view lifecycle -
         viewmodel.loading.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = it
         }
 //        observovanie zmeny sortu
-        viewmodel.sortType.observe(viewLifecycleOwner){
+        viewmodel.sortType.observe(viewLifecycleOwner) {
             viewmodel.sort()
         }
 //        pri nacitani novych dat - sort
-//        viewmodel.bars.observe(viewLifecycleOwner){
-//            viewmodel.sort()
-//        }
+        viewmodel.bars.observe(viewLifecycleOwner){
+//            Log.d("first","first")
+//            if(viewmodel.refresh.value == true) {
+//                Log.d("sec",""+viewmodel.sortType.value)
+            viewmodel.bars.value?.let {
+                if (viewmodel.alreadySorted == false){
+                    viewmodel.sort()
+                }
+                else{
+                    viewmodel.sortos()
+                }
+            }
+
+//            }
+
+        }
         viewmodel.message.observe(viewLifecycleOwner) {
             if (PreferenceData.getInstance().getUserItem(requireContext()) == null) {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
         }
 //       ked sa naplni mylocation tak sa sortnu data
-        viewmodel.myLocation.observe(viewLifecycleOwner){
+        viewmodel.myLocation.observe(viewLifecycleOwner) {
 //            viewmodel.sortBy("distanceAsc","distanceDesc")
             viewmodel.getDistance()
-            viewmodel.sortBy("distanceAsc","distanceDesc")
+            viewmodel.sortBy("distanceAsc", "distanceDesc")
             viewmodel.loading.postValue(false)
         }
     }
@@ -215,9 +232,21 @@ class BarsFragment : Fragment() {
                 it?.let {
                     viewmodel.myLocation.postValue(MyLocation(it.latitude, it.longitude))
 
-                } ?: viewmodel.loading.postValue(false)
+                } ?: run {
+                    viewmodel.loading.postValue(false)
+                    viewmodel.show("Cant get your location")
+                }
+
             }
 
+        }
+        else {
+            locationPermissionRequest.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
         }
     }
 
@@ -230,7 +259,6 @@ class BarsFragment : Fragment() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
-
 
 
     override fun onDestroyView() {

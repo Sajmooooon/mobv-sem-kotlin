@@ -27,16 +27,13 @@ class DataRepository private constructor(
         onSuccess: (success: Boolean) -> Unit
     ) {
         try {
-
             val resp = service.addFriend(AddContactRequest(contact = name))
             when (resp.code()) {
                 500 -> onError("User doesnt exist.")
-                400 -> onError("wrong request.")
-                401 -> onError("non authorized.")
-                404 -> onError("wrong endpoint.")
-                200 -> resp.body()?.let { user ->
-                    onSuccess(true)
-                }
+                400 -> onError("Wrong request.")
+                401 -> onError("Non authorized.")
+                404 -> onError("Wrong endpoint.")
+                200 -> onSuccess(true)
                 else -> onError("Failed to add Friend, try again later.")
 
             }
@@ -60,7 +57,6 @@ class DataRepository private constructor(
             val resp = service.friendList()
             if (resp.isSuccessful) {
                 resp.body()?.let { bars ->
-                    Log.d("body", "" + bars)
                     val b = bars.map {
                         Contact(
                             it.user_id,
@@ -72,7 +68,6 @@ class DataRepository private constructor(
                             it.bar_lon
                         )
                     }
-                    Log.d("friend", b.toString())
                     cache.deleteFriends()
                     cache.insertFriends(b)
                 } ?: onError("Failed to load friends")
@@ -374,16 +369,16 @@ class DataRepository private constructor(
                 INSTANCE
                     ?: DataRepository(service, cache).also { INSTANCE = it }
             }
-
-        @SuppressLint("SimpleDateFormat")
-        fun dateToTimeStamp(date: String): Long {
-            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date)?.time ?: 0L
-        }
-
-        @SuppressLint("SimpleDateFormat")
-        fun timestampToDate(time: Long): String {
-            val netDate = Date(time * 1000)
-            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(netDate)
-        }
+//
+//        @SuppressLint("SimpleDateFormat")
+//        fun dateToTimeStamp(date: String): Long {
+//            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date)?.time ?: 0L
+//        }
+//
+//        @SuppressLint("SimpleDateFormat")
+//        fun timestampToDate(time: Long): String {
+//            val netDate = Date(time * 1000)
+//            return SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(netDate)
+//        }
     }
 }

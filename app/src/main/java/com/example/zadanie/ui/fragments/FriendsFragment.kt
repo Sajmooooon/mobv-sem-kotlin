@@ -92,6 +92,8 @@ class FriendsFragment : Fragment() {
             }
         }
 
+
+
         viewmodel.loading.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = it
         }
