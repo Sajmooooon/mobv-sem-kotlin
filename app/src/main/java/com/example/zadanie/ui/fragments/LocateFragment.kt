@@ -156,9 +156,16 @@ class LocateFragment : Fragment() {
             binding.swiperefresh.isRefreshing = it
         }
         viewmodel.emptyBar.observe(viewLifecycleOwner) {
-
+//            ak sa nenacita ziaden bar, tak sa skryje lottie
             if(viewmodel.emptyBar.value == true){
                 binding.lottieLoading.isGone = true
+            }
+//            ak sa nacita bar, tak za ukonci lottie animacia
+            else{
+                val anim = binding.lottieLoading
+                anim.playAnimation()
+                anim.speed = 2F
+                anim.setMinAndMaxFrame(40,60)
             }
 
         }
@@ -174,16 +181,17 @@ class LocateFragment : Fragment() {
 
 
 //        pri nacitani dat sa stopne animacia
-        viewmodel.myBar.observe(viewLifecycleOwner) {
-            viewmodel.myBar.value?.let {
-                val anim = binding.lottieLoading
-                anim.playAnimation()
-                anim.speed = 2F
-                anim.setMinAndMaxFrame(40,60)
-//                anim.progress = 1F
-            }
-        }
+//        viewmodel.myBar.observe(viewLifecycleOwner) {
+//            viewmodel.myBar.value?.let {
+////                val anim = binding.lottieLoading
+////                anim.playAnimation()
+////                anim.speed = 2F
+////                anim.setMinAndMaxFrame(40,60)
+////                anim.progress = 1F
+//            }
+//        }
 
+//        pri checkine vypise spravu a vytvori fence
         viewmodel.checkedIn.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 if (it) {
@@ -195,6 +203,7 @@ class LocateFragment : Fragment() {
             }
         }
 
+//        pri ziskani permissi sa ziska mylocation
         if (checkPermissions()) {
             loadData()
         } else {
@@ -205,9 +214,7 @@ class LocateFragment : Fragment() {
             if (PreferenceData.getInstance().getUserItem(requireContext()) == null) {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
-//            if(!viewmodel.message.value.toString().isNullOrEmpty()){
-//                binding.lottieLoading.isGone = false
-//            }
+
 
         }
 

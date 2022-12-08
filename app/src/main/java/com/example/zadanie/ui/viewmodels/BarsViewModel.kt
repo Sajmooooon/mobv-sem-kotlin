@@ -17,10 +17,6 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
     val locationBtn: Boolean
         get() = _locationBtn
 
-    //    pri stlaceni loc a ziskani permissi na automaticku navigaciu
-//    private var _distanceBtn = false
-//    val distanceBtn: Boolean
-//        get() = _distanceBtn
 
 //    na kontrolu aby nedoslo k nekonecnemu cyklu
     private var _alreadySorted = false
@@ -107,11 +103,6 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
     fun switchToLocation(value: Boolean) {
         _locationBtn = value
     }
-
-//    pri prijati permissi a kliknuti na distance automaticky sort aby nemusel 2krat klikat
-//    fun switchSort(value: Boolean){
-//        _distanceBtn = value
-//    }
 
 
 //    ak bolo predtym Asc zmen na Desc toho isteho typu - vice versa

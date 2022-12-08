@@ -40,7 +40,6 @@ class FriendsAdapter(val events: FriendsEvents? = null) :
 
         fun bind(item: Contact, events: FriendsEvents?) {
             itemView.findViewById<TextView>(R.id.name).text = item.user_name
-//            itemView.findViewById<TextView>(R.id.count).text = item.users.toString()
             itemView.findViewById<TextView>(R.id.bar_name).text = item.bar_name
 
             itemView.setOnClickListener { events?.onFriendClick(item) }

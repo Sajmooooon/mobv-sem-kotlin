@@ -7,7 +7,6 @@ import com.example.zadanie.helpers.Evento
 import kotlinx.coroutines.launch
 
 class AddFriendViewModel(private val repository: DataRepository) : ViewModel()  {
-//    kuknut repo
     private val _message = MutableLiveData<Evento<String>>()
     val message: LiveData<Evento<String>>
         get() = _message

@@ -45,7 +45,6 @@ class BarsFragment : Fragment() {
             else -> {
                 viewmodel.show("Location access denied.")
                 viewmodel.switchToLocation(false)
-//                viewmodel.switchSort(false)
                 // No location access granted.
             }
         }
@@ -92,9 +91,10 @@ class BarsFragment : Fragment() {
             bnd.friendsScreen.setOnClickListener{
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
             }
+//            pri kliknuti na bars ikonu refreshnu sa daa
             bnd.barsScreen.setOnClickListener{
-                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
-
+                viewmodel.refreshData()
+//                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
             }
             bnd.locationScreen.setOnClickListener{
                 if (checkPermissions()) {

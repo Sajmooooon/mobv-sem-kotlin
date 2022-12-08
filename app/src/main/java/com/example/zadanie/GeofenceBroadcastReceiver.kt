@@ -14,7 +14,7 @@ import com.google.android.gms.location.GeofencingEvent
 //ked location service detekuje zmenu - vstup/vystup z geofence, posle intent
 // v PendingIntent, u included in request to add geofences
 //GeofenceBroadcastReceiver detekuje ze Intent bol vyvolany a moze ziskat geofenc event
-//z intentu, urcit typ prechodu a urcit ktore geo ohranicienie bolo spustene
+//z intentu, urci typ prechodu a urcit ktore geo ohranicienie bolo spustene
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val geofencingEvent = intent?.let { GeofencingEvent.fromIntent(it) }

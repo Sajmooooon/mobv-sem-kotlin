@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.zadanie.R
 import com.example.zadanie.helpers.autoNotify
+import java.util.*
 import kotlin.properties.Delegates
 
 class DetailAdapter() : RecyclerView.Adapter<DetailAdapter.BarDetailItemViewHolder>() {
@@ -36,7 +37,7 @@ class DetailAdapter() : RecyclerView.Adapter<DetailAdapter.BarDetailItemViewHold
     ) : RecyclerView.ViewHolder(itemView) {
 
         fun bind(item: BarDetailItem) {
-            val name = item.key.capitalize()+":"
+            val name = item.key.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } +":"
             itemView.findViewById<TextView>(R.id.name).text = name
             itemView.findViewById<TextView>(R.id.value).text = item.value
         }

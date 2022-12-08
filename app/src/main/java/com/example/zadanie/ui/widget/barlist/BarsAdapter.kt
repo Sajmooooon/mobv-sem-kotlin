@@ -30,7 +30,7 @@ class BarsAdapter(val events: BarsEvents? = null) :
     override fun getItemCount(): Int {
         return items.size
     }
-// called by layout managaer in order to replace contents of list item view
+// called by layout manager in order to replace contents of list item view
 //  holder vytvoreny itemviewholderom a position - reprezentuje poziciu itemu v liste
     override fun onBindViewHolder(holder: BarItemViewHolder, position: Int) {
 //    binduje udaje cez bind
