@@ -52,9 +52,9 @@ class LoginFragment : Fragment() {
             model = authViewModel
         }
 
+//        pri kliknuti login btn ak nie su blank tak vykona login
         binding.login.setOnClickListener {
             if (binding.username.text.toString().isNotBlank() && binding.password.text.toString().isNotBlank()) {
-                //it.findNavController().popBackStack(R.id.bars_fragment,false)
                 authViewModel.login(
                     binding.username.text.toString(),
                     binding.password.text.toString()
@@ -64,10 +64,12 @@ class LoginFragment : Fragment() {
             }
         }
 
+//        pri kliknuti na reg sa zobrazi obrazovka reg
         binding.signup.setOnClickListener {
             it.findNavController().navigate(R.id.action_to_sign_up)
         }
 
+//        po uspesnom prihlaseni sa ulozi info o userovi a prehodi sa na bars obr
         authViewModel.user.observe(viewLifecycleOwner){
             it?.let {
                 PreferenceData.getInstance().putUserItem(requireContext(),it)

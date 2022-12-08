@@ -54,11 +54,11 @@ class AddFriendFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
         }
+//        back btn
         binding.back.setOnClickListener {
             it.findNavController().popBackStack()
         }
-
-
+//        ak je uspesne pridany, tak zobrazi spravu
         viewmodel.friendAdd.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 if (it) {
@@ -67,9 +67,9 @@ class AddFriendFragment : Fragment() {
             }
         }
 
+//        pri stlaceni tlacidla pridaj prijatela
         binding.add.setOnClickListener {
             if (binding.username.text.toString().isNotBlank()) {
-                //it.findNavController().popBackStack(R.id.bars_fragment,false)
                 viewmodel.add(
                     binding.username.text.toString(),
 
@@ -80,11 +80,6 @@ class AddFriendFragment : Fragment() {
             }
         }
 
-//        binding.friendList.setOnClickListener {
-//
-////            it.findNavController().navigate(R.id.action_to_locate)
-//            it.findNavController().navigate(R.id.action_to_friends)
-//        }
 
     }
     override fun onDestroyView() {

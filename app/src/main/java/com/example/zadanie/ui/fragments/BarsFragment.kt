@@ -4,16 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import com.example.zadanie.R
-import com.example.zadanie.databinding.FragmentAddFriendBinding
 import com.example.zadanie.databinding.FragmentBarsBinding
 import com.example.zadanie.helpers.Injection
 import com.example.zadanie.helpers.PreferenceData
@@ -38,9 +35,7 @@ class BarsFragment : Fragment() {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 if (viewmodel.locationBtn == true) {
                     Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
-
                 }
-//                 pridat kontrolu ked sa spusti sort a prijme sa tak nech sa zosortuje
                 // Precise location access granted.
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
@@ -49,6 +44,8 @@ class BarsFragment : Fragment() {
             }
             else -> {
                 viewmodel.show("Location access denied.")
+                viewmodel.switchToLocation(false)
+//                viewmodel.switchSort(false)
                 // No location access granted.
             }
         }
@@ -92,39 +89,29 @@ class BarsFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
         }.also { bnd ->
-//            bnd.bottomNavigationView.itemIconTintList = null;
-            bnd.bottomNavigation.setOnItemSelectedListener {
-                // do stuff
-                when (it.itemId) {
-                    R.id.menuBars -> {
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
-                        return@setOnItemSelectedListener true
-                    }
-                    R.id.menuFriends -> {
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
-                        return@setOnItemSelectedListener true
-                    }
-                    R.id.menuLocation -> {
-                        if (checkPermissions()) {
-                            Navigation.findNavController(requireView())
-                                .navigate(R.id.action_to_locate)
-                            return@setOnItemSelectedListener true
-                        } else {
-                            viewmodel.switch()
-                            locationPermissionRequest.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
-                        }
-
-                    }
-                }
-                false
+            bnd.friendsScreen.setOnClickListener{
+                Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
             }
-//            bnd.bottomNavigation.selectedItemId(R.id.menuBars)
-            bnd.bottomNavigation.getMenu().findItem(R.id.menuBars).setChecked(true);
+            bnd.barsScreen.setOnClickListener{
+                Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
+
+            }
+            bnd.locationScreen.setOnClickListener{
+                if (checkPermissions()) {
+                    Navigation.findNavController(requireView())
+                        .navigate(R.id.action_to_locate)
+                } else {
+                    viewmodel.switchToLocation(true)
+                    locationPermissionRequest.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                }
+//                Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
+            }
+
 
 //            sort
             bnd.sortName.setOnClickListener {
@@ -134,94 +121,66 @@ class BarsFragment : Fragment() {
                 viewmodel.sortBy("usersAsc", "usersDesc")
             }
 
+//            pri sortDistance nacitaj data do mylocation
             bnd.sortDistance.setOnClickListener {
-                    loadData()
+                loadData()
             }
 
+//            pri logout - vymaz preferencedata a navig. to login
             bnd.logout.setOnClickListener {
                 PreferenceData.getInstance().clearData(requireContext())
                 Navigation.findNavController(it).navigate(R.id.action_to_login)
             }
 
+//            refresh
             bnd.swiperefresh.setOnRefreshListener {
                 viewmodel.refreshData()
             }
 
-//
-//            bnd.findBar.setOnClickListener {
-//                if (checkPermissions()) {
-//                    it.findNavController().navigate(R.id.action_to_locate)
-//                } else {
-//                    viewmodel.switch()
-//                    locationPermissionRequest.launch(
-//                        arrayOf(
-//                            Manifest.permission.ACCESS_FINE_LOCATION,
-//                            Manifest.permission.ACCESS_COARSE_LOCATION
-//                        )
-//                    )
-//                }
-//
-//            }
-//            bnd.addFriendBtn.setOnClickListener{
-//                if (checkPermissions()) {
-//
-//                    loadData()
-//
-//
-//                }
-//                else{
-//                    locationPermissionRequest.launch(
-//                        arrayOf(
-//                            Manifest.permission.ACCESS_FINE_LOCATION,
-//                            Manifest.permission.ACCESS_COARSE_LOCATION
-//                        )
-//                    )
-//                }
-//
-//                it.findNavController().navigate(R.id.action_to_add)
-//            }
         }
 
 //        viewLifecycleOwner reprezentuje fragments view lifecycle -
         viewmodel.loading.observe(viewLifecycleOwner) {
             binding.swiperefresh.isRefreshing = it
         }
-//        observovanie zmeny sortu
+//        observovanie zmeny typu sortu
+//        pri kliknuti na sort btn sa zacne sortovat pre konkretny typ
         viewmodel.sortType.observe(viewLifecycleOwner) {
             viewmodel.sort()
         }
 //        pri nacitani novych dat - sort
         viewmodel.bars.observe(viewLifecycleOwner){
-//            Log.d("first","first")
-//            if(viewmodel.refresh.value == true) {
-//                Log.d("sec",""+viewmodel.sortType.value)
+
             viewmodel.bars.value?.let {
-                if (viewmodel.alreadySorted == false){
+//                kontrola aby nedoslo k zacyklenu pri sorte
+                if (!viewmodel.alreadySorted){
                     viewmodel.sort()
+
                 }
                 else{
-                    viewmodel.sortos()
+//                    ak bol prave sortnuty tak prepne na false aby sa dal znova pouzit
+                    viewmodel.switchSorted()
                 }
             }
 
-//            }
-
         }
+
         viewmodel.message.observe(viewLifecycleOwner) {
             if (PreferenceData.getInstance().getUserItem(requireContext()) == null) {
                 Navigation.findNavController(requireView()).navigate(R.id.action_to_login)
             }
         }
+
 //       ked sa naplni mylocation tak sa sortnu data
         viewmodel.myLocation.observe(viewLifecycleOwner) {
-//            viewmodel.sortBy("distanceAsc","distanceDesc")
-            viewmodel.getDistance()
+//            viewmodel.getDistance()
             viewmodel.sortBy("distanceAsc", "distanceDesc")
             viewmodel.loading.postValue(false)
         }
     }
 
     @SuppressLint("MissingPermission")
+//    ak su permissie tak ziska mylocation
     private fun loadData() {
         if (checkPermissions()) {
             viewmodel.loading.postValue(true)

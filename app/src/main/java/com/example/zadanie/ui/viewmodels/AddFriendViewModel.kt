@@ -29,6 +29,7 @@ class AddFriendViewModel(private val repository: DataRepository) : ViewModel()  
             emitSource(repository.dbFriends())
         }
 
+//    pridanie priatela
     fun add(name: String){
         viewModelScope.launch {
             loading.postValue(true)

@@ -57,31 +57,10 @@ class FriendsFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
         }.also { bnd ->
-//            bnd.logout.setOnClickListener {
-//                PreferenceData.getInstance().clearData(requireContext())
-//                Navigation.findNavController(it).navigate(R.id.action_to_login)
-//            }
 
-            bnd.bottomNavigation.setOnItemSelectedListener {
-                // do stuff
-                when(it.itemId){
-                    R.id.menuBars ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
-                        return@setOnItemSelectedListener true
-                    }
-                    R.id.menuFriends ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
-                        return@setOnItemSelectedListener true
-                    }
-                    R.id.menuLocation ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
-                        return@setOnItemSelectedListener true
-                    }
-                }
-                false
+            binding.back.setOnClickListener {
+                it.findNavController().popBackStack()
             }
-
-            bnd.bottomNavigation.getMenu().findItem(R.id.menuFriends).setChecked(true);
 
             bnd.swiperefresh.setOnRefreshListener {
                 viewmodel.refreshData()

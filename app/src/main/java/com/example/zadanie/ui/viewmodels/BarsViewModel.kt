@@ -1,6 +1,5 @@
 package com.example.zadanie.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.zadanie.data.DataRepository
 import com.example.zadanie.data.db.model.BarItem
@@ -13,10 +12,23 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
     val message: LiveData<Evento<String>>
         get() = _message
 
-    var locationBtn = false
-    var alreadySorted = false
+//    pri stlaceni loc a ziskani permissi na automaticku navigaciu
+    private var _locationBtn = false
+    val locationBtn: Boolean
+        get() = _locationBtn
+
+    //    pri stlaceni loc a ziskani permissi na automaticku navigaciu
+//    private var _distanceBtn = false
+//    val distanceBtn: Boolean
+//        get() = _distanceBtn
+
+//    na kontrolu aby nedoslo k nekonecnemu cyklu
+    private var _alreadySorted = false
+    val alreadySorted: Boolean
+        get() = _alreadySorted
+
     val myLocation = MutableLiveData<MyLocation>(null)
-    var sortType: MutableLiveData<String> = MutableLiveData("barAsc")
+    val sortType: MutableLiveData<String> = MutableLiveData("barAsc")
     val loading = MutableLiveData(false)
     val bars = MutableLiveData<List<BarItem>?>(null)
 
@@ -50,6 +62,11 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
 
 
     fun sort() {
+//        nastavi sa true aby nedoslo k zacykleniu pri observeri
+        _alreadySorted = true
+//        ziska sa vzdialenost ak nie je bar null a aj mylocation
+        getDistance()
+
         bars.value?.let { bar ->
             val tmp: List<BarItem>
             when (sortType.value) {
@@ -76,49 +93,51 @@ class BarsViewModel(private val repository: DataRepository) : ViewModel() {
                     tmp = bar.sortedBy { it.name }
                 }
             }
-            alreadySorted = true
+
             bars.postValue(tmp)
         }
 
     }
 
-    fun sortos(){
-        alreadySorted = false
+    fun switchSorted(){
+        _alreadySorted = false
     }
 
     //    kliknutie tlacidla na prepnutie lokacii - aby automaticky preplo po prijati permissi
-    fun switch() {
-        locationBtn = true
+    fun switchToLocation(value: Boolean) {
+        _locationBtn = value
     }
 
+//    pri prijati permissi a kliknuti na distance automaticky sort aby nemusel 2krat klikat
+//    fun switchSort(value: Boolean){
+//        _distanceBtn = value
+//    }
+
+
+//    ak bolo predtym Asc zmen na Desc toho isteho typu - vice versa
     fun sortBy(cond1: String, cond2:String) {
         if (sortType.value == cond1) sortType.value = cond2 else sortType.value = cond1
     }
 
+//    ziska vzdialenost od nas ku podnikom
     fun getDistance() {
         myLocation.value?.let{ loc->
-//            Log.d("myloc",""+myLocation.value)
             bars.value?.let { bar ->
                 val tmp = bar.map {
                     it.distance = it.distanceTo(loc)
                     it
                 }
-
                 bars.postValue(tmp)
-//                Log.d("tmp","tmp"+bars.value)
             }
         }
-        sort()
     }
 
+//    refresh dat
     fun refreshData() {
         viewModelScope.launch {
-//            refresh.postValue(false)
             loading.postValue(true)
-//            repository.apiBarListSorted()
             repository.apiBarList { _message.postValue(Evento(it)) }
             loading.postValue(false)
-//            refresh.postValue(true)
         }
     }
 

@@ -25,23 +25,7 @@ class DetailViewModel(private val repository: DataRepository) : ViewModel() {
 
     val type = bar.map { it?.tags?.getOrDefault("amenity", "") ?: "" }
 //    ziskanie id baru
-    val id = bar.map { it?.id }
-
-//    ziskanie userov
-//    test id: 2192480912
-//    fun text(){
-//    val users : MutableLiveData<Int?> =
-//        liveData {
-//            loading.postValue(true)
-//            repository.apiBarList { _message.postValue(Evento(it)) }
-//            loading.postValue(false)
-//            print("3195103137")
-//            emitSource(repository.getDbUsers("3195103137"))
-//        }
-//    }
-
-
-
+//    val id = bar.map { it?.id }
 
     val details: LiveData<List<BarDetailItem>> = bar.switchMap {
         liveData {
@@ -52,65 +36,21 @@ class DetailViewModel(private val repository: DataRepository) : ViewModel() {
             } ?: emit(emptyList<BarDetailItem>())
         }
     }
-//    val users: LiveData<Int>  = liveData {
-//        repository.apiBarList { _message.postValue(Evento(it)) }
-//
-//    }
 
-//    fun loadUseers(id: String){
-//        if (id.isBlank())
-//            return
-//        viewModelScope.launch {
-//            loading.postValue(true)
-//
-//            emit(repository.getDbUsers(id))
-//            loading.postValue(false)
-//        }
-//    }
-
-//   suspend fun loadUser(id: String) {
-//        if (id.isBlank())
-//            return
-//        viewModelScope.launch {
-//            loading.postValue(true)
-//            users.postValue(repository.getDbUsers(id))
-////            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
-//            loading.postValue(false)
-//        }
-//
-//
-//    }
-
+//nacitaj bar
     fun loadBar(id: String) {
         if (id.isBlank())
             return
         viewModelScope.launch {
             loading.postValue(true)
-//            coroutineScope {
             bar.postValue(repository.apiBarDetail(id) { _message.postValue(Evento(it)) })
-//            }
-//            coroutineScope {
-//                loadUsers(id)
-//            }
-//            users.postValue(repository.getDbUsers(id){ _message.postValue(Evento(it)) })
             loading.postValue(false)
         }
-//        text()
         loadUsers(id)
-
-
-
     }
-//    fun loadUsers(){
-//        id.value?.let {
-//            users.postValue(repository.getDbUsers(it){ _message.postValue(Evento(it)) })
-//            Log.d("users",""+users.value)
-//        }
-//
-//    }
 
+//  nacitaj userov nie v hlavnom procese
     fun loadUsers(id:String){
-
         if (id.isBlank())
             return
         CoroutineScope(Dispatchers.IO).launch{

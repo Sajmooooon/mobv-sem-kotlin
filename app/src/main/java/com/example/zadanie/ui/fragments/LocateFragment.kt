@@ -117,36 +117,16 @@ class LocateFragment : Fragment() {
             Navigation.findNavController(view).navigate(R.id.action_to_login)
             return
         }
-//        val anim = binding.lottieLoading
-//        anim.playAnimation()
 
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             model = viewmodel
         }.also { bnd ->
-            bnd.bottomNavigation.setOnItemSelectedListener {
-                // do stuff
-                when(it.itemId){
-                    R.id.menuBars ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_bars)
-                        return@setOnItemSelectedListener true
-                    }
-                    R.id.menuFriends ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_friends)
-                        return@setOnItemSelectedListener true
-                    }
-                    R.id.menuLocation ->{
-                        Navigation.findNavController(requireView()).navigate(R.id.action_to_locate)
-                        return@setOnItemSelectedListener true
-                    }
-                }
-                false
+            binding.back.setOnClickListener {
+                it.findNavController().popBackStack()
             }
-            bnd.bottomNavigation.getMenu().findItem(R.id.menuLocation).setChecked(true);
 
-//            bnd.back.setOnClickListener {
-//                it.findNavController().popBackStack()
-//            }
+
             bnd.swiperefresh.setOnRefreshListener {
                 loadData()
             }

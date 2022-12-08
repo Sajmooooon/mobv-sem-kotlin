@@ -21,6 +21,7 @@ class DataRepository private constructor(
     private val cache: LocalCache
 ) {
 
+//    pridanie priatela
     suspend fun apiAddFriend(
         name: String,
         onError: (error: String) -> Unit,
@@ -29,7 +30,7 @@ class DataRepository private constructor(
         try {
             val resp = service.addFriend(AddContactRequest(contact = name))
             when (resp.code()) {
-                500 -> onError("User doesnt exist.")
+                500 -> onError("User doesn't exist.")
                 400 -> onError("Wrong request.")
                 401 -> onError("Non authorized.")
                 404 -> onError("Wrong endpoint.")
@@ -47,11 +48,10 @@ class DataRepository private constructor(
         }
     }
 
-
+//  zobrazenie priatelov - nacitanie a ulozenie do DB
     suspend fun apiFriendsList(
         onError: (error: String) -> Unit
     ) {
-        Log.d("friend-in", "Startin")
         try {
             Log.d("friend-more", "in2")
             val resp = service.friendList()
@@ -83,6 +83,7 @@ class DataRepository private constructor(
         }
     }
 
+//    register pouzivatela
     suspend fun apiUserCreate(
         name: String,
         password: String,
@@ -115,6 +116,7 @@ class DataRepository private constructor(
         }
     }
 
+//    login pouzivatela
     suspend fun apiUserLogin(
         name: String,
         password: String,
@@ -147,6 +149,7 @@ class DataRepository private constructor(
         }
     }
 
+//    zapisanie do baru
     suspend fun apiBarCheckin(
         bar: NearbyBar,
         onError: (error: String) -> Unit,
@@ -178,7 +181,7 @@ class DataRepository private constructor(
         }
     }
 
-
+//  ziskanie a ulozenie barlistu do DB
     suspend fun apiBarList(
         onError: (error: String) -> Unit
     ) {
@@ -249,6 +252,7 @@ class DataRepository private constructor(
 //    }
 
 
+//    bary v okolo od nasej vzdialenosti
     suspend fun apiNearbyBars(
         lat: Double, lon: Double,
         onError: (error: String) -> Unit
@@ -287,6 +291,7 @@ class DataRepository private constructor(
         return nearby
     }
 
+//    ziskanie detialu baru
     suspend fun apiBarDetail(
         id: String,
         onError: (error: String) -> Unit
@@ -322,6 +327,7 @@ class DataRepository private constructor(
         return nearby
     }
 
+//    nacitanie barov
     fun dbBars(): LiveData<List<BarItem>?> {
         return cache.getBars()
     }
@@ -351,11 +357,12 @@ class DataRepository private constructor(
 //        return cache.getDistanceAsc()
 //    }
 
-
+//  nacitanie priatelov
     fun dbFriends(): LiveData<List<Contact>?> {
         return cache.getFriends()
     }
 
+//  ziskanie pocet pouzivatelov v danom bare
     fun getDbUsers(id: String?, onError: (error: String) -> Unit): Int? {
         return cache.getUsers(id)
     }

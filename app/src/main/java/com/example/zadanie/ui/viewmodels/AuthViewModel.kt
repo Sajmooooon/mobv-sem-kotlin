@@ -15,6 +15,7 @@ class AuthViewModel(private val repository: DataRepository): ViewModel() {
 
     val loading = MutableLiveData(false)
 
+//    login usera
     fun login(name: String, password: String){
         viewModelScope.launch {
             loading.postValue(true)
@@ -27,6 +28,7 @@ class AuthViewModel(private val repository: DataRepository): ViewModel() {
         }
     }
 
+//    register usera
     fun signup(name: String, password: String){
         viewModelScope.launch {
             loading.postValue(true)

@@ -50,6 +50,7 @@ class LocateViewModel(private val repository: DataRepository): ViewModel() {
         }
     }
 
+//    zapisanie sa do baru
     fun checkMe(){
         viewModelScope.launch {
             loading.postValue(true)

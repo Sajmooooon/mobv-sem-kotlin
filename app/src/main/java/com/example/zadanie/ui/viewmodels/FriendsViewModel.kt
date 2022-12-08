@@ -25,6 +25,7 @@ class FriendsViewModel(private val repository: DataRepository): ViewModel() {
             emitSource(repository.dbFriends())
         }
 
+//    refresh
     fun refreshData(){
         viewModelScope.launch {
             loading.postValue(true)

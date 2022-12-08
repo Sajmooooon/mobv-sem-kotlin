@@ -54,6 +54,7 @@ class SignUpFragment : Fragment() {
             model = authViewModel
         }
 
+//        pri uspesnom vyplneni udajov vykona register
         binding.signup.setOnClickListener {
             if (binding.username.text.toString().isNotBlank() && binding.password.text.toString().isNotBlank()
                 && binding.password.text.toString().compareTo(binding.repeatPassword.text.toString())==0) {
@@ -68,10 +69,12 @@ class SignUpFragment : Fragment() {
             }
         }
 
+//        pri kliknuti na text o logine - login obr
         binding.login.setOnClickListener {
             it.findNavController().navigate(R.id.action_to_login)
         }
 
+//        pri uspenej registacii - prihlaseni uloz udaje a prehod na bars obrazovku
         authViewModel.user.observe(viewLifecycleOwner){
             it?.let {
                 PreferenceData.getInstance().putUserItem(requireContext(),it)

@@ -34,7 +34,7 @@ interface DbDao {
     @Query("SELECT users FROM bars WHERE id =:id")
     fun getUsers(id: String?): Int?
 
-//    sort
+//    Old sort cez Dao
 
 //    @Query("SELECT * FROM bars order by users DESC")
 //    fun getBarsUsersDesc(): LiveData<List<BarItem>?>

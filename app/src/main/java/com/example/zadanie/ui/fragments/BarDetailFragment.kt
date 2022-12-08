@@ -35,7 +35,6 @@ class BarDetailFragment : Fragment() {
             Injection.provideViewModelFactory(requireContext())
         ).get(DetailViewModel::class.java)
 
-//        viewModel.id.observe()
     }
 
     override fun onCreateView(
@@ -62,6 +61,7 @@ class BarDetailFragment : Fragment() {
         }.also { bnd ->
             bnd.back.setOnClickListener { it.findNavController().popBackStack() }
 
+//            zobrazi bar na mape podla lat a lon
             bnd.mapButton.setOnClickListener {
                 startActivity(
                     Intent(
@@ -80,20 +80,16 @@ class BarDetailFragment : Fragment() {
             }
         }
 
+//      ziska detail o bare
         viewModel.loadBar(navigationArgs.id)
 
+//        ak sa nacital bar tak zobrazi aj pocet uzivatelov - nacitavali sa rychlejsie
         viewModel.bar.observe(viewLifecycleOwner) {
             viewModel.bar.value?.let {
                 binding.value.visibility = View.VISIBLE
             }
         }
-//        binding.value.isVisible = true
 
-//        viewModel.loading.observe(viewLifecycleOwner) {
-//            if(it){
-//                binding.value.isVisible = true
-//            }
-//        }
     }
 
     override fun onDestroyView() {
