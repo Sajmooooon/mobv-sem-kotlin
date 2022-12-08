@@ -222,29 +222,20 @@ class LocateFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun loadData() {
+        val anim = binding.lottieLoading
         if (checkPermissions()) {
-//          pri nacitani sa zapne animacia
-            val anim = binding.lottieLoading
+            viewmodel.loading.postValue(true)
             anim.isVisible = true
             anim.playAnimation()
-//            binding.lottieLoading.setMaxFrame(10)
             anim.setMinAndMaxFrame(0,10)
-//            binding.lottieLoading.speed = 0.5F
-//            binding.lottieLoading.progress = 0.2F
-
-//            binding.lottieLoading.pauseAnimation()
-            viewmodel.loading.postValue(true)
 //            ziskanie presnej lokacie
             fusedLocationClient.getCurrentLocation(
                 CurrentLocationRequest.Builder().setDurationMillis(30000)
                     .setMaxUpdateAgeMillis(60000).build(), null
             ).addOnSuccessListener {
                 it?.let {
-//                    binding.lottieLoading.setMaxFrame(20)
                     anim.playAnimation()
                     anim.setMinAndMaxFrame(10,20)
-//                    binding.lottieLoading.progress = 0.5F
-//                    binding.lottieLoading.progress = 0.4F
                     viewmodel.myLocation.postValue(MyLocation(it.latitude, it.longitude))
                 } ?: run{
                     anim.isGone = true

@@ -15,7 +15,7 @@ class LocateViewModel(private val repository: DataRepository): ViewModel() {
         get() = _message
 
     val loading = MutableLiveData(false)
-    val emptyBar = MutableLiveData(false)
+    val emptyBar:MutableLiveData<Boolean?> = MutableLiveData(null)
     val startRest = MutableLiveData(false)
     val myLocation = MutableLiveData<MyLocation>(null)
     val myBar= MutableLiveData<NearbyBar>(null)
