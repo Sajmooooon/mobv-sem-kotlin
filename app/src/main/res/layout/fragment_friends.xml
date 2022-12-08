@@ -17,9 +17,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header"
             android:layout_width="match_parent"
-
             android:layout_height="60dp"
-            android:background="@color/teal_700"
+            android:background="@drawable/navbar_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -27,12 +26,12 @@
 
             <TextView
                 android:id="@+id/header_title"
-                style="@style/TextAppearance.Material3.HeadlineLarge"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="Friends"
+                android:text="@string/friends"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -52,28 +51,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-<!--        <TextView-->
-<!--            android:id="@+id/header_title"-->
-<!--            style="@style/TextAppearance.Material3.HeadlineLarge"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="Friends"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/logout"-->
-<!--            style="@style/TextAppearance.Material3.BodyMedium"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:padding="10dp"-->
-<!--            android:text="@string/log_out"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/header_title"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/header_title"-->
-<!--            />-->
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swiperefresh"

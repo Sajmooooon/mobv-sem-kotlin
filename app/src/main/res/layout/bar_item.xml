@@ -27,7 +27,7 @@
         android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@+id/bar_img"
         android:layout_height="wrap_content"
-        android:paddingStart="7dp"
+        android:layout_marginStart="7dp"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Bar" />
 
